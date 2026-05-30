@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>whisper — voice notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Garamond:ital,wght@0,400;1,400&family=EB+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.hidden { display: none !important; }
+
+:root {
+  --white: #ffffff;
+  --off: #f9f9f9;
+  --ink: #111111;
+  --soft: #888888;
+  --lighter: #cccccc;
+  --rule: #e8e8e8;
+  --red: #d44;
+}
+
+html, body {
+  background: var(--white);
+  color: var(--ink);
+  font-family: 'EB Garamond', Georgia, serif;
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* PAGES */
+.page { display: none; min-height: 100vh; flex-direction: column; }
+.page.active { display: flex; }
+
+/* ============================
+   LANDING
+============================ */
+#pg-land {
+  justify-content: space-between;
+  padding: 0;
+  background: white;
+}
+
+.land-top {
+  padding: 52px 28px 0;
+}
+
+.land-wordmark {
+  font-family: 'Caveat', cursive;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+.land-tagline {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--soft);
+}
+
+.land-hero {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 28px;
+}
+
+/* ROUGH SKETCH ILLUSTRATION */
+.sketch-box {
+  width: 220px;
+  position: relative;
+}
+
+.sketch-box svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.land-bottom {
+  padding: 0 28px 52px;
+}
+
+.land-headline {
+  font-family: 'EB Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1.25;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+
+.land-headline em {
+  font-style: italic;
+}
+
+.land-desc {
+  font-size: 14px;
+  color: var(--soft);
+  font-style: italic;
+  line-height: 1.65;
+  margin-bottom: 36px;
+  max-width: 280px;
+}
+
+.btn-main {
+  display: block;
+  width: 100%;
+  padding: 17px;
+  background: var(--ink);
+  color: white;
+  text-align: center;
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  margin-bottom: 12px;
+}
+.btn-main:hover { opacity: 0.8; }
+
+.btn-ghost {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: transparent;
+  color: var(--soft);
+  text-align: center;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-ghost:hover { border-color: var(--lighter); color: var(--ink); }
+
+/* ============================
+   CREATE PAGE
+============================ */
+#pg-create {
+  background: white;
+}
+
+.pg-header {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--rule);
+  gap: 16px;
+}
+
+.back-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: 'EB Garamond', serif;
+  font-size: 22px;
+  color: var(--soft);
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.pg-header-label {
+  font-family: 'Caveat', cursive;
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.create-body {
+  flex: 1;
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.field-group { display: flex; flex-direction: column; gap: 8px; }
+
+.field-label {
+  font-family: 'Caveat', cursive;
+  font-size: 13px;
+  color: var(--soft);
+  letter-spacing: 0.05em;
+}
+
+.field-input {
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  padding: 10px 0;
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  color: var(--ink);
+  background: transparent;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.field-input:focus { border-color: var(--ink); }
+.field-input::placeholder { color: var(--lighter); font-style: italic; }
+
+.field-textarea {
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  padding: 10px 0;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink);
+  background: transparent;
+  outline: none;
+  width: 100%;
+  resize: none;
+  transition: border-color 0.15s;
+  line-height: 1.7;
+}
+.field-textarea:focus { border-color: var(--ink); }
+.field-textarea::placeholder { color: var(--lighter); }
+
+/* Audio section */
+.audio-zone {
+  border: 1.5px dashed var(--rule);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  position: relative;
+}
+.audio-zone:hover { border-color: var(--lighter); }
+.audio-zone.has-audio { border-color: var(--ink); border-style: solid; }
+
+.audio-zone-icon {
+  font-family: 'Caveat', cursive;
+  font-size: 32px;
+  margin-bottom: 8px;
+  display: block;
+  color: var(--lighter);
+}
+.audio-zone.has-audio .audio-zone-icon { color: var(--ink); }
+
+.audio-zone-text {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--soft);
+}
+
+.audio-zone-meta {
+  margin-top: 8px;
+  font-family: 'Caveat', cursive;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.or-line {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--lighter);
+  font-size: 12px;
+  font-style: italic;
+}
+.or-line::before, .or-line::after {
+  content: ''; flex: 1; height: 1px; background: var(--rule);
+}
+
+.btn-rec {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  background: white;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--soft);
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+.btn-rec:hover { border-color: var(--red); color: var(--red); }
+.btn-rec.recording { border-color: var(--red); color: var(--red); }
+
+.rec-indicator {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  flex-shrink: 0;
+}
+.btn-rec.recording .rec-indicator { animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* Waveform mini */
+.mini-wave {
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  margin-top: 12px;
+  display: none;
+}
+.mini-wave.show { display: flex; }
+.mw-bar {
+  flex: 1;
+  border-radius: 1px;
+  background: var(--rule);
+  min-height: 3px;
+}
+
+.create-footer {
+  padding: 20px 28px 48px;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.btn-wrap {
+  width: 100%;
+  padding: 17px;
+  background: var(--ink);
+  color: white;
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-wrap:disabled { opacity: 0.25; cursor: default; }
+.btn-wrap:not(:disabled):hover { opacity: 0.75; }
+
+/* ============================
+   SHARE PAGE
+============================ */
+#pg-share {
+  align-items: center;
+  justify-content: center;
+  padding: 48px 28px;
+  text-align: center;
+}
+
+.share-icon {
+  font-family: 'Caveat', cursive;
+  font-size: 48px;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.share-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.share-title em { font-style: italic; }
+
+.share-sub {
+  font-size: 13px;
+  color: var(--soft);
+  font-style: italic;
+  margin-bottom: 40px;
+}
+
+.link-display {
+  width: 100%;
+  max-width: 360px;
+  background: var(--off);
+  padding: 16px 20px;
+  font-family: 'Caveat', cursive;
+  font-size: 14px;
+  color: var(--soft);
+  word-break: break-all;
+  text-align: left;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.share-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 36px;
+}
+
+.btn-copy-link {
+  flex: 1;
+  padding: 14px;
+  border: 1px solid var(--ink);
+  background: white;
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-copy-link:hover { background: var(--ink); color: white; }
+
+.btn-share-it {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  background: var(--ink);
+  color: white;
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-share-it:hover { opacity: 0.75; }
+
+.share-credit {
+  font-size: 11px;
+  color: var(--lighter);
+  font-style: italic;
+  letter-spacing: 0.05em;
+}
+
+.demo-audio-upload {
+  border: 1px dashed var(--rule);
+  padding: 10px 14px;
+  cursor: pointer;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--lighter);
+  transition: all 0.15s;
+  text-align: center;
+}
+.demo-audio-upload:hover { border-color: var(--ink); color: var(--soft); }
+.demo-audio-upload.loaded { border-color: var(--ink); border-style: solid; color: var(--ink); }
+
+/* ============================
+   PLAYER / LIST
+============================ */
+#pg-player {
+  background: white;
+}
+
+.player-top {
+  padding: 52px 28px 0;
+}
+
+.player-wordmark {
+  font-family: 'Caveat', cursive;
+  font-size: 20px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.player-from {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--soft);
+  margin-bottom: 48px;
+}
+
+.track-list {
+  padding: 0 28px;
+  flex: 1;
+}
+
+.track-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.track-entry:first-child { border-top: 1px solid var(--rule); }
+.track-entry:hover { opacity: 0.6; }
+
+.track-n {
+  font-family: 'Caveat', cursive;
+  font-size: 12px;
+  color: var(--lighter);
+  width: 18px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.track-t {
+  font-family: 'EB Garamond', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--ink);
+  flex: 1;
+  line-height: 1.2;
+}
+
+.track-dur {
+  font-family: 'Caveat', cursive;
+  font-size: 12px;
+  color: var(--lighter);
+  flex-shrink: 0;
+}
+
+.player-footer {
+  padding: 32px 28px 52px;
+  text-align: center;
+}
+
+.player-footer-note {
+  font-size: 11px;
+  color: var(--lighter);
+  font-style: italic;
+}
+
+/* ============================
+   MODAL — MUSIC BOX PLAYER
+============================ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-sheet {
+  width: 100%;
+  background: white;
+  border-radius: 12px 12px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  max-height: 92vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.overlay.open .modal-sheet {
+  transform: translateY(0);
+}
+
+.modal-drag-handle {
+  width: 36px; height: 4px;
+  background: var(--rule);
+  border-radius: 2px;
+  margin: 14px auto 0;
+  flex-shrink: 0;
+}
+
+.modal-inner {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-close-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.modal-close-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 20px; color: var(--lighter);
+  padding: 4px; line-height: 1;
+}
+.modal-close-btn:hover { color: var(--ink); }
+
+.modal-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 22px;
+  font-style: italic;
+  text-align: center;
+  color: var(--ink);
+  margin-bottom: 4px;
+  line-height: 1.25;
+}
+
+.modal-sub {
+  font-family: 'Caveat', cursive;
+  font-size: 13px;
+  color: var(--soft);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+/* ============================
+   SKETCH MUSIC BOX (player)
+============================ */
+.sketch-player-wrap {
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The tape strip coming out top */
+.tape-strip-area {
+  width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: -2px;
+  position: relative;
+  z-index: 1;
+}
+
+.tape-strip-svg {
+  width: 100%;
+}
+
+/* The box body */
+.box-body-svg {
+  width: 100%;
+  max-width: 300px;
+}
+
+/* Handle interaction area */
+.handle-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.handle-hint-text {
+  font-family: 'Caveat', cursive;
+  font-size: 16px;
+  color: var(--soft);
+  text-align: center;
+  transition: color 0.2s;
+}
+.handle-hint-text.active-color { color: var(--ink); }
+
+/* SVG handle wrapper */
+.handle-svg-wrap {
+  width: 100px;
+  height: 100px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.handle-svg-wrap:active { cursor: grabbing; }
+
+.handle-svg-wrap svg {
+  overflow: visible;
+}
+
+/* Time display */
+.time-display {
+  font-family: 'Caveat', cursive;
+  font-size: 15px;
+  color: var(--lighter);
+  text-align: center;
+  margin-top: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* Mini waveform in modal */
+.modal-wave {
+  width: 100%;
+  max-width: 300px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 1.5px;
+  margin-bottom: 16px;
+}
+.modal-wave-bar {
+  flex: 1;
+  border-radius: 1px;
+  min-height: 3px;
+  transition: background 0.08s;
+}
+.modal-wave-bar.played { background: var(--ink); }
+.modal-wave-bar.current { background: var(--red); }
+.modal-wave-bar.unplayed { background: var(--rule); }
+
+/* Note message display */
+.modal-note-msg {
+  width: 100%;
+  max-width: 300px;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--soft);
+  text-align: center;
+  line-height: 1.7;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  margin-top: 8px;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--ink);
+  color: white;
+  padding: 10px 22px;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  border-radius: 100px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s;
+  z-index: 999;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+input[type=file] { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ======================== LANDING ======================== -->
+<div id="pg-land" class="page active">
+  <div class="land-top">
+    <div class="land-wordmark">whisper</div>
+    <div class="land-tagline">special voice notes</div>
+  </div>
+
+  <div class="land-hero">
+    <div class="sketch-box">
+      <!-- Rough sketch SVG of a music box, top-down view like the reference photo -->
+      <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tape strip coming out top -->
+        <rect x="76" y="0" width="48" height="80" rx="2" fill="none" stroke="#ccc" stroke-width="1.5" stroke-dasharray="2 1"/>
+        <!-- Tape holes on strip -->
+        <circle cx="88" cy="12" r="2.5" fill="#ddd"/>
+        <circle cx="100" cy="8" r="2.5" fill="#ddd"/>
+        <circle cx="112" cy="16" r="2.5" fill="#ddd"/>
+        <circle cx="88" cy="24" r="2.5" fill="#ddd"/>
+        <circle cx="112" cy="28" r="2.5" fill="#ddd"/>
+        <circle cx="100" cy="36" r="2.5" fill="#ddd"/>
+        <circle cx="88" cy="44" r="2.5" fill="#ddd"/>
+        <circle cx="112" cy="40" r="2.5" fill="#ddd"/>
+        <circle cx="100" cy="52" r="2.5" fill="#ddd"/>
+        <circle cx="88" cy="60" r="2.5" fill="#ddd"/>
+        <circle cx="112" cy="56" r="2.5" fill="#ddd"/>
+        <circle cx="100" cy="68" r="2.5" fill="#ddd"/>
+        <!-- Direction arrow on tape -->
+        <path d="M100 2 L96 7 M100 2 L104 7" stroke="#bbb" stroke-width="1" stroke-linecap="round"/>
+
+        <!-- Box outer (rough, slightly imperfect) -->
+        <path d="M18 85 L182 84 L184 260 L16 261 Z" fill="white" stroke="#aaa" stroke-width="2" stroke-linejoin="round"/>
+        <!-- Box wood grain lines (rough) -->
+        <path d="M20 110 Q100 108 182 110" stroke="#eee" stroke-width="1"/>
+        <path d="M20 135 Q100 133 182 135" stroke="#eee" stroke-width="1"/>
+        <path d="M20 160 Q100 158 182 160" stroke="#eee" stroke-width="1"/>
+        <path d="M20 185 Q100 183 182 185" stroke="#eee" stroke-width="1"/>
+        <path d="M20 210 Q100 208 182 210" stroke="#eee" stroke-width="1"/>
+        <path d="M20 235 Q100 233 182 235" stroke="#eee" stroke-width="1"/>
+
+        <!-- Mechanism inside box (the metal comb part) -->
+        <rect x="60" y="92" width="80" height="60" rx="2" fill="#f5f5f5" stroke="#bbb" stroke-width="1.5"/>
+        <!-- Mechanism tines -->
+        <line x1="68" y1="104" x2="68" y2="148" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="74" y1="104" x2="74" y2="150" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="80" y1="104" x2="80" y2="147" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="86" y1="104" x2="86" y2="149" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="92" y1="104" x2="92" y2="148" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="98" y1="104" x2="98" y2="150" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="104" y1="104" x2="104" y2="147" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="110" y1="104" x2="110" y2="149" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="116" y1="104" x2="116" y2="148" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="122" y1="104" x2="122" y2="150" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="128" y1="104" x2="128" y2="147" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="134" y1="104" x2="134" y2="149" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- Handle sticking out right side -->
+        <line x1="184" y1="165" x2="210" y2="165" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="210" cy="165" r="7" fill="none" stroke="#aaa" stroke-width="2"/>
+        <circle cx="210" cy="158" r="4" fill="none" stroke="#aaa" stroke-width="2"/>
+        <line x1="210" y1="158" x2="210" y2="154" stroke="#aaa" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- Tape coming out bottom of mechanism -->
+        <rect x="76" y="152" width="48" height="108" rx="2" fill="none" stroke="#ddd" stroke-width="1.2" stroke-dasharray="2 1"/>
+        <circle cx="88" cy="164" r="2" fill="#eee"/>
+        <circle cx="112" cy="172" r="2" fill="#eee"/>
+        <circle cx="100" cy="180" r="2" fill="#eee"/>
+        <circle cx="88" cy="192" r="2" fill="#eee"/>
+        <circle cx="112" cy="200" r="2" fill="#eee"/>
+        <circle cx="100" cy="212" r="2" fill="#eee"/>
+        <circle cx="88" cy="224" r="2" fill="#eee"/>
+        <circle cx="112" cy="232" r="2" fill="#eee"/>
+        <circle cx="100" cy="244" r="2" fill="#eee"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="land-bottom">
+    <h1 class="land-headline">Leave a voice,<br><em>they'll turn to hear.</em></h1>
+    <p class="land-desc">Record your voice. Send a link. They turn a handle to listen — like a music box, but it's you.</p>
+    <button class="btn-main" onclick="showPage('pg-create')">Create a note</button>
+    <div style="display:flex;gap:10px;align-items:stretch">
+      <button class="btn-ghost" style="flex:1" onclick="startDemo()">See how it works</button>
+      <button class="btn-ghost" style="width:44px;flex-shrink:0;font-size:16px;padding:0" onclick="toggleDemoSettings()" title="Configure demo">⚙</button>
+    </div>
+
+    <!-- DEMO SETTINGS PANEL -->
+    <div id="demoSettings" style="display:none;margin-top:16px;border:1px solid var(--rule);padding:20px 16px;background:var(--off)">
+      <div style="font-family:'Caveat',cursive;font-size:13px;color:var(--soft);margin-bottom:16px;letter-spacing:0.05em">demo settings</div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <!-- Track 1 -->
+        <div style="border-bottom:1px solid var(--rule);padding-bottom:14px">
+          <div style="font-family:'Caveat',cursive;font-size:11px;color:var(--lighter);margin-bottom:8px;letter-spacing:0.08em">TRACK 1</div>
+          <input class="field-input" id="dTitle0" placeholder="title..." value="for you, on this morning" style="font-size:14px;margin-bottom:6px">
+          <input class="field-input" id="dMsg0" placeholder="note... (optional)" value="I wanted to say this out loud." style="font-size:13px;font-style:italic;margin-bottom:8px">
+          <div class="demo-audio-upload" id="dAudio0" onclick="document.getElementById('dFile0').click()">
+            <span id="dAudioLabel0">&#9835; upload audio for this track</span>
+          </div>
+          <input type="file" id="dFile0" accept="audio/*" onchange="handleDemoFile(0, this.files[0])">
+        </div>
+        <!-- Track 2 -->
+        <div style="border-bottom:1px solid var(--rule);padding-bottom:14px">
+          <div style="font-family:'Caveat',cursive;font-size:11px;color:var(--lighter);margin-bottom:8px;letter-spacing:0.08em">TRACK 2</div>
+          <input class="field-input" id="dTitle1" placeholder="title..." value="things I should have said sooner" style="font-size:14px;margin-bottom:6px">
+          <input class="field-input" id="dMsg1" placeholder="note... (optional)" value="" style="font-size:13px;font-style:italic;margin-bottom:8px">
+          <div class="demo-audio-upload" id="dAudio1" onclick="document.getElementById('dFile1').click()">
+            <span id="dAudioLabel1">&#9835; upload audio for this track</span>
+          </div>
+          <input type="file" id="dFile1" accept="audio/*" onchange="handleDemoFile(1, this.files[0])">
+        </div>
+        <!-- Track 3 -->
+        <div>
+          <div style="font-family:'Caveat',cursive;font-size:11px;color:var(--lighter);margin-bottom:8px;letter-spacing:0.08em">TRACK 3</div>
+          <input class="field-input" id="dTitle2" placeholder="title..." value="goodnight, always" style="font-size:14px;margin-bottom:6px">
+          <input class="field-input" id="dMsg2" placeholder="note... (optional)" value="close your eyes." style="font-size:13px;font-style:italic;margin-bottom:8px">
+          <div class="demo-audio-upload" id="dAudio2" onclick="document.getElementById('dFile2').click()">
+            <span id="dAudioLabel2">&#9835; upload audio for this track</span>
+          </div>
+          <input type="file" id="dFile2" accept="audio/*" onchange="handleDemoFile(2, this.files[0])">
+        </div>
+      </div>
+      <button class="btn-main" style="margin-top:20px" onclick="saveDemoSettings()">Save &amp; preview &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== CREATE ======================== -->
+<div id="pg-create" class="page">
+  <div class="pg-header">
+    <button class="back-btn" onclick="showPage('pg-land')">←</button>
+    <span class="pg-header-label">new voice note</span>
+  </div>
+
+  <div class="create-body" id="createBody">
+
+    <div class="field-group">
+      <label class="field-label">title</label>
+      <input class="field-input" id="noteTitle" type="text" placeholder="for you, on this day…" maxlength="60" oninput="checkReady()">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">audio</label>
+      <div class="audio-zone" id="audioZone" onclick="document.getElementById('fileIn').click()">
+        <span class="audio-zone-icon" id="azIcon">♪</span>
+        <div class="audio-zone-text" id="azText">tap to choose an audio file</div>
+        <div class="audio-zone-meta hidden" id="azMeta"></div>
+      </div>
+      <input type="file" id="fileIn" accept="audio/*" onchange="handleFile(this.files[0])">
+
+      <div class="mini-wave" id="miniWave"></div>
+
+      <div class="or-line">or</div>
+
+      <button class="btn-rec" id="recBtn" onclick="toggleRec()">
+        <div class="rec-indicator"></div>
+        <span id="recBtnLabel">record your voice</span>
+      </button>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">a little note <span style="color:var(--lighter);font-style:italic">(optional)</span></label>
+      <textarea class="field-textarea" id="noteMsg" rows="2" placeholder="something you want them to read first…"></textarea>
+    </div>
+
+  </div>
+
+  <div class="create-footer">
+    <button class="btn-wrap" id="wrapBtn" disabled onclick="doWrap()">Wrap it →</button>
+  </div>
+</div>
+
+<!-- ======================== SHARE ======================== -->
+<div id="pg-share" class="page">
+  <span class="share-icon">✉</span>
+  <h2 class="share-title">Your note<br><em>is ready.</em></h2>
+  <p class="share-sub">Link expires in 7 days</p>
+  <div class="link-display" id="shareUrl">https://whisper.sena/m/xxxxxxxx</div>
+  <div class="share-row">
+    <button class="btn-copy-link" onclick="copyUrl()">Copy link</button>
+    <button class="btn-share-it" onclick="shareIt()">Share ↗</button>
+  </div>
+  <button class="btn-ghost" style="max-width:340px;margin-bottom:24px" onclick="previewNote()">Preview your note →</button>
+  <p class="share-credit">whisper — special voice notes by sena</p>
+</div>
+
+<!-- ======================== PLAYER ======================== -->
+<div id="pg-player" class="page">
+  <div class="player-top">
+    <div class="player-wordmark">whisper</div>
+    <div class="player-from" id="playerFrom">someone left you a voice note</div>
+  </div>
+
+  <div class="track-list" id="trackList">
+    <!-- generated -->
+  </div>
+
+  <div class="player-footer">
+    <p class="player-footer-note">turn the handle to listen</p>
+  </div>
+</div>
+
+<!-- ======================== MODAL — MUSIC BOX ======================== -->
+<div class="overlay" id="overlay" onclick="maybeCloseOverlay(event)">
+  <div class="modal-sheet" id="modalSheet">
+    <div class="modal-drag-handle"></div>
+    <div class="modal-inner">
+
+      <div class="modal-close-row">
+        <button class="modal-close-btn" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-title" id="modalTitle">—</div>
+      <div class="modal-sub" id="modalSub">0:00 / 0:00</div>
+
+      <!-- Waveform -->
+      <div class="modal-wave" id="modalWave"></div>
+
+      <div class="sketch-player-wrap">
+        <!-- Tape coming out top of box -->
+        <div class="tape-strip-area">
+          <svg class="tape-strip-svg" viewBox="0 0 90 100" fill="none">
+            <!-- tape strip -->
+            <rect x="5" y="0" width="80" height="100" rx="2" fill="white" stroke="#ddd" stroke-width="1.5"/>
+            <!-- column lines -->
+            <line x1="20" y1="0" x2="20" y2="100" stroke="#eee" stroke-width="0.8"/>
+            <line x1="35" y1="0" x2="35" y2="100" stroke="#eee" stroke-width="0.8"/>
+            <line x1="50" y1="0" x2="50" y2="100" stroke="#eee" stroke-width="0.8"/>
+            <line x1="65" y1="0" x2="65" y2="100" stroke="#eee" stroke-width="0.8"/>
+            <!-- holes — these animate -->
+            <g id="tapeHolesTop"></g>
+            <!-- arrow indicator -->
+            <path d="M45 6 L41 12 M45 6 L49 12" stroke="#bbb" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Box body -->
+        <svg class="box-body-svg" viewBox="0 0 300 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- outer box rough shape -->
+          <path d="M8 8 L292 7 L294 174 L6 175 Z" fill="white" stroke="#bbb" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- wood grain -->
+          <path d="M8 38 Q150 36 292 38" stroke="#f0f0f0" stroke-width="1.2"/>
+          <path d="M8 68 Q150 66 292 68" stroke="#f0f0f0" stroke-width="1.2"/>
+          <path d="M8 98 Q150 96 292 98" stroke="#f0f0f0" stroke-width="1.2"/>
+          <path d="M8 128 Q150 126 292 128" stroke="#f0f0f0" stroke-width="1.2"/>
+          <path d="M8 158 Q150 156 292 158" stroke="#f0f0f0" stroke-width="1.2"/>
+
+          <!-- mechanism housing -->
+          <rect x="70" y="14" width="160" height="90" rx="3" fill="#fafafa" stroke="#ccc" stroke-width="1.5"/>
+
+          <!-- comb tines -->
+          <line x1="82" y1="24" x2="82" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="90" y1="24" x2="90" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="98" y1="24" x2="98" y2="99" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="106" y1="24" x2="106" y2="101" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="114" y1="24" x2="114" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="122" y1="24" x2="122" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="130" y1="24" x2="130" y2="99" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="138" y1="24" x2="138" y2="101" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="146" y1="24" x2="146" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="154" y1="24" x2="154" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="162" y1="24" x2="162" y2="99" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="170" y1="24" x2="170" y2="101" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="178" y1="24" x2="178" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="186" y1="24" x2="186" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="194" y1="24" x2="194" y2="99" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="202" y1="24" x2="202" y2="101" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="210" y1="24" x2="210" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="218" y1="24" x2="218" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
+
+          <!-- Active tine highlight (animated via JS class on tine-active) -->
+          <line id="activeTine" x1="150" y1="24" x2="150" y2="101" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" opacity="0"/>
+
+          <!-- Handle shaft -->
+          <line x1="294" y1="88" x2="318" y2="88" stroke="#aaa" stroke-width="3.5" stroke-linecap="round"/>
+
+          <!-- Handle group — rotates in JS -->
+          <g id="handleGroup" transform="rotate(0, 318, 88)">
+            <!-- L-arm -->
+            <line x1="318" y1="88" x2="318" y2="64" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
+            <!-- knob -->
+            <circle cx="318" cy="56" r="9" fill="none" stroke="#999" stroke-width="2.5"/>
+            <circle cx="318" cy="56" r="4" fill="#ddd" stroke="#aaa" stroke-width="1.5"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="handle-area">
+        <!-- Rotatable handle interaction zone -->
+        <div class="handle-svg-wrap" id="handleWrap"
+          onmousedown="handleDragStart(event)"
+          ontouchstart="handleDragStart(event)">
+          <svg width="100" height="100" viewBox="0 0 100 100" overflow="visible">
+            <!-- outer ring hint -->
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#f0f0f0" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <!-- handle arm that rotates -->
+            <g id="handleInteractiveArm" transform-origin="50 50" style="transform-origin:50px 50px; transform:rotate(0deg)">
+              <!-- center pivot -->
+              <circle cx="50" cy="50" r="8" fill="#f0f0f0" stroke="#ccc" stroke-width="1.5"/>
+              <!-- arm line -->
+              <line x1="50" y1="50" x2="50" y2="12" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+              <!-- knob at end -->
+              <circle cx="50" cy="12" r="10" fill="white" stroke="#bbb" stroke-width="2"/>
+              <circle cx="50" cy="12" r="5" fill="#e8e8e8" stroke="#ccc" stroke-width="1.5"/>
+              <!-- direction arrows -->
+              <path d="M70 30 A30 30 0 0 1 72 50" stroke="#ddd" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M72 50 L68 46 M72 50 L76 47" stroke="#ddd" stroke-width="1.5" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+        <div class="handle-hint-text" id="handleHint">turn clockwise to listen</div>
+        <div class="time-display" id="modalTime">0:00 / 0:00</div>
+      </div>
+
+      <div class="modal-note-msg hidden" id="modalMsg"></div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="aud"></audio>
+
+<script>
+// ================================
+// UTILS — defined first so always available
+// ================================
+function fmt(s) {
+  if (!s || isNaN(s) || s < 0) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ================================
+// STATE
+// ================================
+const S = {
+  tracks: [],
+  cur: -1,
+  playing: false,
+  pendingAudio: null,
+  isRecording: false,
+  mediaRecorder: null,
+  recChunks: [],
+  recSecs: 0,
+  recTimer: null,
+};
+
+const aud = document.getElementById('aud');
+
+// ================================
+// DEMO DATA
+// ================================
+const DEMO = [
+  { title: 'for you, on this morning', msg: 'I wanted to say this out loud.', dur: 14, url: null },
+  { title: "things I should've said sooner", msg: '', dur: 9, url: null },
+  { title: 'goodnight, always', msg: 'close your eyes.', dur: 6, url: null },
+];
+
+// Demo overrides (set via settings panel)
+const demoOverrides = [
+  { title: null, msg: null, url: null, dur: null },
+  { title: null, msg: null, url: null, dur: null },
+  { title: null, msg: null, url: null, dur: null },
+];
+
+function toggleDemoSettings() {
+  const el = document.getElementById('demoSettings');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleDemoFile(idx, file) {
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const tmp = new Audio(url);
+  tmp.onloadedmetadata = () => {
+    demoOverrides[idx].url = url;
+    demoOverrides[idx].dur = tmp.duration;
+    const label = document.getElementById('dAudioLabel' + idx);
+    label.textContent = '✓ ' + file.name;
+    document.getElementById('dAudio' + idx).classList.add('loaded');
+  };
+}
+
+function saveDemoSettings() {
+  for (let i = 0; i < 3; i++) {
+    const t = document.getElementById('dTitle' + i).value.trim();
+    const m = document.getElementById('dMsg' + i).value.trim();
+    if (t) demoOverrides[i].title = t;
+    if (m !== undefined) demoOverrides[i].msg = m;
+  }
+  toggleDemoSettings();
+  startDemo();
+}
+
+function startDemo() {
+  S.tracks = DEMO.map((t, i) => ({
+    title: demoOverrides[i].title || t.title,
+    msg:   demoOverrides[i].msg   !== null ? demoOverrides[i].msg : t.msg,
+    dur:   demoOverrides[i].dur   || t.dur,
+    url:   demoOverrides[i].url   || t.url,
+  }));
+  renderTracklist();
+  showPage('pg-player');
+}
+
+// ================================
+// PAGE NAV
+// ================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ================================
+// FILE / RECORD
+// ================================
+function handleFile(file) {
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const tmp = new Audio(url);
+  tmp.onloadedmetadata = () => {
+    S.pendingAudio = { url, dur: tmp.duration, blob: file };
+    document.getElementById('azIcon').textContent = '✓';
+    document.getElementById('azText').textContent = file.name;
+    document.getElementById('azMeta').textContent = fmt(tmp.duration);
+    document.getElementById('azMeta').classList.remove('hidden');
+    document.getElementById('audioZone').classList.add('has-audio');
+    buildMiniWave();
+    checkReady();
+  };
+}
+
+function buildMiniWave() {
+  const c = document.getElementById('miniWave');
+  c.innerHTML = '';
+  c.classList.add('show');
+  for (let i = 0; i < 36; i++) {
+    const b = document.createElement('div');
+    b.className = 'mw-bar';
+    b.style.height = (Math.random() * 70 + 15) + '%';
+    b.style.background = '#e8e8e8';
+    c.appendChild(b);
+  }
+}
+
+async function toggleRec() {
+  if (!S.isRecording) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      S.mediaRecorder = new MediaRecorder(stream);
+      S.recChunks = [];
+      S.recSecs = 0;
+      S.mediaRecorder.ondataavailable = e => S.recChunks.push(e.data);
+      S.mediaRecorder.onstop = () => {
+        const blob = new Blob(S.recChunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        S.pendingAudio = { url, dur: S.recSecs, blob };
+        document.getElementById('azIcon').textContent = '✓';
+        document.getElementById('azText').textContent = 'Recording — ' + fmt(S.recSecs);
+        document.getElementById('azMeta').textContent = fmt(S.recSecs);
+        document.getElementById('azMeta').classList.remove('hidden');
+        document.getElementById('audioZone').classList.add('has-audio');
+        buildMiniWave();
+        checkReady();
+        stream.getTracks().forEach(t => t.stop());
+      };
+      S.mediaRecorder.start();
+      S.isRecording = true;
+      document.getElementById('recBtn').classList.add('recording');
+      S.recTimer = setInterval(() => {
+        S.recSecs++;
+        document.getElementById('recBtnLabel').textContent = 'recording… ' + fmt(S.recSecs);
+      }, 1000);
+    } catch(e) { toast('Microphone access denied'); }
+  } else {
+    S.mediaRecorder.stop();
+    S.isRecording = false;
+    clearInterval(S.recTimer);
+    document.getElementById('recBtn').classList.remove('recording');
+    document.getElementById('recBtnLabel').textContent = 'record your voice';
+  }
+}
+
+function checkReady() {
+  const hasTitle = document.getElementById('noteTitle').value.trim().length > 0;
+  const hasAudio = !!S.pendingAudio;
+  document.getElementById('wrapBtn').disabled = !(hasTitle && hasAudio);
+}
+
+function doWrap() {
+  if (!S.pendingAudio) return;
+  const track = {
+    title: document.getElementById('noteTitle').value.trim(),
+    msg: document.getElementById('noteMsg').value.trim(),
+    dur: S.pendingAudio.dur,
+    url: S.pendingAudio.url,
+  };
+  S.tracks = [track];
+  const id = Math.random().toString(36).slice(2, 10);
+  document.getElementById('shareUrl').textContent = 'https://whisper.sena/m/' + id;
+
+  // Show share page
+  showPage('pg-share');
+
+  // Reset form
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteMsg').value = '';
+  document.getElementById('azIcon').textContent = '♪';
+  document.getElementById('azText').textContent = 'tap to choose an audio file';
+  document.getElementById('azMeta').classList.add('hidden');
+  document.getElementById('audioZone').classList.remove('has-audio');
+  document.getElementById('miniWave').classList.remove('show');
+  document.getElementById('wrapBtn').disabled = true;
+  document.getElementById('fileIn').value = '';
+  S.pendingAudio = null;
+}
+
+// ================================
+// SHARE
+// ================================
+function copyUrl() {
+  const t = document.getElementById('shareUrl').textContent;
+  navigator.clipboard.writeText(t).then(() => toast('Copied!'));
+}
+function shareIt() {
+  const t = document.getElementById('shareUrl').textContent;
+  if (navigator.share) navigator.share({ title: 'A voice note for you', url: t });
+  else copyUrl();
+}
+
+function previewNote() {
+  renderTracklist();
+  showPage('pg-player');
+}
+
+// ================================
+// TRACKLIST
+// ================================
+function renderTracklist() {
+  const c = document.getElementById('trackList');
+  c.innerHTML = '';
+  S.tracks.forEach((tr, i) => {
+    const el = document.createElement('div');
+    el.className = 'track-entry';
+    el.innerHTML = `
+      <span class="track-n">${i+1}</span>
+      <span class="track-t">${tr.title}</span>
+      <span class="track-dur">${fmt(tr.dur)}</span>
+    `;
+    el.onclick = () => openModal(i);
+    c.appendChild(el);
+  });
+}
+
+// ================================
+// MODAL
+// ================================
+let modalWaveBars = [];
+let simInterval = null;
+let simElapsed = 0;
+
+function openModal(i) {
+  S.cur = i;
+  const tr = S.tracks[i];
+
+  document.getElementById('modalTitle').textContent = tr.title;
+  document.getElementById('modalSub').textContent = fmt(0) + ' / ' + fmt(tr.dur);
+  document.getElementById('modalTime').textContent = fmt(0) + ' / ' + fmt(tr.dur);
+
+  if (tr.msg) {
+    document.getElementById('modalMsg').textContent = tr.msg;
+    document.getElementById('modalMsg').classList.remove('hidden');
+  } else {
+    document.getElementById('modalMsg').classList.add('hidden');
+  }
+
+  // Build waveform
+  const mw = document.getElementById('modalWave');
+  mw.innerHTML = '';
+  modalWaveBars = [];
+  const BAR_COUNT = 44;
+  const heights = [];
+  for (let j = 0; j < BAR_COUNT; j++) heights.push(Math.random() * 70 + 15);
+  for (let j = 0; j < BAR_COUNT; j++) {
+    const b = document.createElement('div');
+    b.className = 'modal-wave-bar unplayed';
+    b.style.height = heights[j] + '%';
+    mw.appendChild(b);
+    modalWaveBars.push(b);
+  }
+
+  // Build tape holes
+  buildTapeHoles();
+
+  // Setup audio
+  if (tr.url) {
+    aud.src = tr.url;
+    aud.load();
+  }
+
+  // Reset handle
+  handleAngle = 0;
+  setHandleAngle(0);
+  setBoxHandleAngle(0);
+  simElapsed = 0;
+  S.playing = false;
+  document.getElementById('handleHint').textContent = 'turn clockwise to listen';
+  document.getElementById('handleHint').classList.remove('active-color');
+
+  // Clear any sim
+  clearInterval(simInterval);
+  aud.pause();
+  aud.currentTime = 0;
+
+  document.getElementById('overlay').classList.add('open');
+}
+
+function buildTapeHoles() {
+  const g = document.getElementById('tapeHolesTop');
+  g.innerHTML = '';
+  const cols = [20, 35, 50, 65];
+  const rows = [15, 25, 38, 48, 60, 72, 85, 95];
+  cols.forEach(cx => {
+    rows.forEach(cy => {
+      if (Math.random() > 0.5) {
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', cx);
+        c.setAttribute('cy', cy);
+        c.setAttribute('r', '3');
+        c.setAttribute('fill', '#ddd');
+        g.appendChild(c);
+      }
+    });
+  });
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  aud.pause();
+  clearInterval(simInterval);
+  S.playing = false;
+}
+
+function maybeCloseOverlay(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+// ================================
+// HANDLE DRAG — THE CORE
+// ================================
+let handleAngle = 0;
+let dragActive = false;
+let dragCx = 0, dragCy = 0;
+let lastDragAngle = 0;
+let lastTurnTime = 0;
+
+function handleDragStart(e) {
+  e.preventDefault();
+  dragActive = true;
+  const wrap = document.getElementById('handleWrap');
+  const r = wrap.getBoundingClientRect();
+  dragCx = r.left + r.width / 2;
+  dragCy = r.top + r.height / 2;
+  const pt = e.touches ? e.touches[0] : e;
+  lastDragAngle = Math.atan2(pt.clientY - dragCy, pt.clientX - dragCx) * 180 / Math.PI;
+
+  document.addEventListener('mousemove', handleDragMove);
+  document.addEventListener('mouseup', handleDragEnd);
+  document.addEventListener('touchmove', handleDragMove, { passive: false });
+  document.addEventListener('touchend', handleDragEnd);
+}
+
+function handleDragMove(e) {
+  if (!dragActive) return;
+  e.preventDefault();
+  const pt = e.touches ? e.touches[0] : e;
+  const angle = Math.atan2(pt.clientY - dragCy, pt.clientX - dragCx) * 180 / Math.PI;
+  let delta = angle - lastDragAngle;
+  if (delta > 180) delta -= 360;
+  if (delta < -180) delta += 360;
+  lastDragAngle = angle;
+
+  handleAngle += delta;
+  setHandleAngle(handleAngle);
+  setBoxHandleAngle(handleAngle);
+
+  if (delta > 0) {
+    lastTurnTime = Date.now();
+    onClockwiseTurn(delta);
+  } else if (delta < -2) {
+    // Counter-clockwise = slow rewind hint
+    document.getElementById('handleHint').textContent = '← turn clockwise';
+    document.getElementById('handleHint').classList.remove('active-color');
+  }
+}
+
+function handleDragEnd() {
+  dragActive = false;
+  lastTurnTime = Date.now();
+  // Pause audio shortly after letting go
+  setTimeout(() => {
+    if (Date.now() - lastTurnTime >= 280 && S.playing) {
+      pausePlayback();
+    }
+  }, 320);
+  document.removeEventListener('mousemove', handleDragMove);
+  document.removeEventListener('mouseup', handleDragEnd);
+  document.removeEventListener('touchmove', handleDragMove);
+  document.removeEventListener('touchend', handleDragEnd);
+}
+
+function setHandleAngle(a) {
+  const arm = document.getElementById('handleInteractiveArm');
+  if (arm) arm.style.transform = `rotate(${a}deg)`;
+}
+
+function setBoxHandleAngle(a) {
+  const hg = document.getElementById('handleGroup');
+  if (hg) hg.setAttribute('transform', `rotate(${a}, 318, 88)`);
+}
+
+// Each degree of clockwise turn = advance audio
+// 360° = ~1.5s of audio
+const DEG_PER_SEC = 240; // degrees per second of audio
+
+function onClockwiseTurn(deg) {
+  const tr = S.tracks[S.cur];
+  if (!tr) return;
+
+  document.getElementById('handleHint').textContent = 'keep turning…';
+  document.getElementById('handleHint').classList.add('active-color');
+
+  const timeAdvance = deg / DEG_PER_SEC;
+
+  if (tr.url) {
+    // Real audio — start playing if paused, let it run, small seek nudge
+    if (aud.paused) {
+      aud.play().catch(() => {});
+      S.playing = true;
+    }
+    // Nudge forward proportional to spin speed (fast spin = faster)
+    const nudge = timeAdvance * 0.6;
+    const newTime = Math.min(aud.duration || tr.dur, aud.currentTime + nudge);
+    aud.currentTime = newTime;
+    updateUI(newTime, aud.duration || tr.dur);
+    if (newTime >= (aud.duration || tr.dur) - 0.1) onEnd();
+  } else {
+    // Demo simulation — purely manual, no auto advance
+    simElapsed = Math.min(tr.dur, simElapsed + timeAdvance);
+    updateUI(simElapsed, tr.dur);
+    S.playing = true;
+    if (simElapsed >= tr.dur - 0.05) onEnd();
+  }
+
+  flashActiveTine();
+  animateTapeHoleActive();
+}
+
+function pausePlayback() {
+  const tr = S.tracks[S.cur];
+  if (tr && tr.url) aud.pause();
+  S.playing = false;
+  const hint = document.getElementById('handleHint');
+  if (hint) {
+    hint.textContent = 'turn clockwise to listen';
+    hint.classList.remove('active-color');
+  }
+}
+
+let activeTineTimer = null;
+function flashActiveTine() {
+  const t = document.getElementById('activeTine');
+  if (!t) return;
+  const x = 82 + Math.floor(Math.random() * 18) * 8;
+  t.setAttribute('x1', x);
+  t.setAttribute('x2', x);
+  t.setAttribute('opacity', '0.8');
+  clearTimeout(activeTineTimer);
+  activeTineTimer = setTimeout(() => t.setAttribute('opacity', '0'), 120);
+}
+
+function animateTapeHoleActive() {
+  const holes = document.querySelectorAll('#tapeHolesTop circle');
+  if (!holes.length) return;
+  holes.forEach(h => h.setAttribute('fill', '#ddd'));
+  const pick = holes[Math.floor(Math.random() * holes.length)];
+  if (pick) { pick.setAttribute('fill', '#aaa'); setTimeout(() => pick.setAttribute('fill', '#ddd'), 100); }
+}
+
+function updateUI(cur, dur) {
+  const pct = dur > 0 ? cur / dur : 0;
+
+  // Waveform
+  const n = modalWaveBars.length;
+  const idx = Math.floor(pct * n);
+  modalWaveBars.forEach((b, i) => {
+    if (i < idx) b.className = 'modal-wave-bar played';
+    else if (i === idx) b.className = 'modal-wave-bar current';
+    else b.className = 'modal-wave-bar unplayed';
+  });
+
+  // Time
+  document.getElementById('modalSub').textContent = fmt(cur) + ' / ' + fmt(dur);
+  document.getElementById('modalTime').textContent = fmt(cur) + ' / ' + fmt(dur);
+}
+
+function onEnd() {
+  S.playing = false;
+  clearInterval(simInterval);
+  document.getElementById('handleHint').textContent = '— finished —';
+  document.getElementById('handleHint').classList.remove('active-color');
+}
+
+// ================================
+// AUDIO EVENTS
+// ================================
+aud.addEventListener('timeupdate', () => {
+  const tr = S.tracks[S.cur];
+  if (!tr || !tr.url) return;
+  updateUI(aud.currentTime, aud.duration);
+});
+aud.addEventListener('ended', onEnd);
+
+// ================================
+// INIT — check hash for demo
+// ================================
+if (location.hash === '#demo') startDemo();
+</script>
+</body>
+</html>

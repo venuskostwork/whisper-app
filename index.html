@@ -26,7 +26,7 @@ nav{padding:18px 28px 16px;display:flex;align-items:center;justify-content:space
 
 .back-row{display:flex;align-items:center;gap:6px;font-size:13px;color:#aaa;cursor:pointer;margin-bottom:28px;width:fit-content}
 .back-row:hover{color:#111}
-.section-pad{padding:28px 28px 40px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.section-pad{padding:28px 28px 40px;flex:1}
 .page-title{font-size:20px;line-height:1.2;margin-bottom:4px}
 .page-subtitle{font-size:12px;color:#bbb;font-style:italic;margin-bottom:24px}
 .divider{height:1px;background:#ebebeb;margin:0 0 0 0}
@@ -36,7 +36,7 @@ nav{padding:18px 28px 16px;display:flex;align-items:center;justify-content:space
 .text-action:hover{opacity:.45}
 
 .landing{padding:44px 28px 36px;flex:1;display:flex;flex-direction:column}
-.il-wrap{display:flex;justify-content:center;margin-bottom:40px;overflow:visible;width:100%}
+.il-wrap{display:flex;justify-content:center;margin-bottom:40px;overflow:visible}
 .l-head{font-style:italic;font-size:22px;line-height:1.5;margin-bottom:10px}
 .l-sub{font-size:13px;color:#aaa;line-height:1.9;margin-bottom:40px}
 .cta-main{font-size:15px;color:#111;display:block;margin-bottom:16px;cursor:pointer}
@@ -157,7 +157,7 @@ nav{padding:18px 28px 16px;display:flex;align-items:center;justify-content:space
 .mwf-bar{display:flex;align-items:flex-end;gap:2px;height:26px;margin-bottom:20px}
 .mwf-bar span{display:block;flex:1;border-radius:1px;transition:background .08s}
 .bp{background:#111}.bc{background:#DD4444}.bu{background:#e8e8e8}
-.mbx{display:flex;justify-content:center;margin-bottom:18px;overflow:visible;width:100%}
+.mbx{display:flex;justify-content:center;margin-bottom:18px;overflow:visible}
 .harea{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:12px;user-select:none}
 .hcv-el{touch-action:none;cursor:grab}
 .hcv-el:active{cursor:grabbing}
@@ -822,7 +822,7 @@ function ckWhisper(){
 function handleFile(input){
   if(!input.files.length) return;
   const file = input.files[0];
-  if(file.size > 25*1024*1024){ showToast('file's too big — max 25MB'); return; }
+  if(file.size > 25*1024*1024){ showToast('file is too big — max 25MB'); return; }
   newAudioBlob = file;
   getAudioDuration(file).then(d=>{ newAudioDuration=d; });
   setAzFilled(file.name);
@@ -1143,10 +1143,10 @@ function musicBoxSVG(prefix){
     <line x1="38" y1="38" x2="110" y2="38" stroke="#e8e8e8" stroke-width=".7"/>
     <line x1="38" y1="46" x2="110" y2="46" stroke="#e8e8e8" stroke-width=".7"/>
     ${holes}
-    <line x1="186" y1="82" x2="200" y2="82" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
-    <circle cx="210" cy="82" r="9" fill="#f5f5f5" stroke="#111" stroke-width="1.2"/>
-    <circle cx="210" cy="82" r="4" fill="#fff" stroke="#111" stroke-width=".9"/>
-    <circle cx="210" cy="82" r="1.8" fill="#111"/>
+    <line x1="186" y1="82" x2="202" y2="82" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="204" cy="82" r="9" fill="#f5f5f5" stroke="#111" stroke-width="1.2"/>
+    <circle cx="204" cy="82" r="4" fill="#fff" stroke="#111" stroke-width=".9"/>
+    <circle cx="204" cy="82" r="1.8" fill="#111"/>
   </svg>`;
 }
 

@@ -3,1577 +3,1163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>whisper — voice notes</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Garamond:ital,wght@0,400;1,400&family=EB+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<title>whisper — by senaslowblog</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-.hidden { display: none !important; }
-
-:root {
-  --white: #ffffff;
-  --off: #f9f9f9;
-  --ink: #111111;
-  --soft: #888888;
-  --lighter: #cccccc;
-  --rule: #e8e8e8;
-  --red: #d44;
-}
-
-html, body {
-  background: var(--white);
-  color: var(--ink);
-  font-family: 'EB Garamond', Georgia, serif;
-  height: 100%;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* PAGES */
-.page { display: none; min-height: 100vh; flex-direction: column; }
-.page.active { display: flex; }
-
-/* ============================
-   LANDING
-============================ */
-#pg-land {
-  justify-content: space-between;
-  padding: 0;
-  background: white;
-}
-
-.land-top {
-  padding: 52px 28px 0;
-}
-
-.land-wordmark {
-  font-family: 'Caveat', cursive;
-  font-size: 22px;
-  font-weight: 400;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-  margin-bottom: 2px;
-}
-
-.land-tagline {
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 13px;
-  color: var(--soft);
-}
-
-.land-hero {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 28px;
-}
-
-/* ROUGH SKETCH ILLUSTRATION */
-.sketch-box {
-  width: 220px;
-  position: relative;
-}
-
-.sketch-box svg {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.land-bottom {
-  padding: 0 28px 52px;
-}
-
-.land-headline {
-  font-family: 'EB Garamond', serif;
-  font-size: 32px;
-  font-weight: 300;
-  line-height: 1.25;
-  margin-bottom: 10px;
-  color: var(--ink);
-}
-
-.land-headline em {
-  font-style: italic;
-}
-
-.land-desc {
-  font-size: 14px;
-  color: var(--soft);
-  font-style: italic;
-  line-height: 1.65;
-  margin-bottom: 36px;
-  max-width: 280px;
-}
-
-.btn-main {
-  display: block;
-  width: 100%;
-  padding: 17px;
-  background: var(--ink);
-  color: white;
-  text-align: center;
-  font-family: 'EB Garamond', serif;
-  font-size: 14px;
-  letter-spacing: 0.08em;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s;
-  margin-bottom: 12px;
-}
-.btn-main:hover { opacity: 0.8; }
-
-.btn-ghost {
-  display: block;
-  width: 100%;
-  padding: 15px;
-  background: transparent;
-  color: var(--soft);
-  text-align: center;
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 14px;
-  border: 1px solid var(--rule);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-ghost:hover { border-color: var(--lighter); color: var(--ink); }
-
-/* ============================
-   CREATE PAGE
-============================ */
-#pg-create {
-  background: white;
-}
-
-.pg-header {
-  display: flex;
-  align-items: center;
-  padding: 18px 20px;
-  border-bottom: 1px solid var(--rule);
-  gap: 16px;
-}
-
-.back-btn {
-  background: none; border: none; cursor: pointer;
-  font-family: 'EB Garamond', serif;
-  font-size: 22px;
-  color: var(--soft);
-  line-height: 1;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-.pg-header-label {
-  font-family: 'Caveat', cursive;
-  font-size: 17px;
-  color: var(--ink);
-}
-
-.create-body {
-  flex: 1;
-  padding: 36px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  max-width: 480px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.field-group { display: flex; flex-direction: column; gap: 8px; }
-
-.field-label {
-  font-family: 'Caveat', cursive;
-  font-size: 13px;
-  color: var(--soft);
-  letter-spacing: 0.05em;
-}
-
-.field-input {
-  border: none;
-  border-bottom: 1px solid var(--rule);
-  padding: 10px 0;
-  font-family: 'EB Garamond', serif;
-  font-size: 18px;
-  color: var(--ink);
-  background: transparent;
-  outline: none;
-  width: 100%;
-  transition: border-color 0.15s;
-}
-.field-input:focus { border-color: var(--ink); }
-.field-input::placeholder { color: var(--lighter); font-style: italic; }
-
-.field-textarea {
-  border: none;
-  border-bottom: 1px solid var(--rule);
-  padding: 10px 0;
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 15px;
-  color: var(--ink);
-  background: transparent;
-  outline: none;
-  width: 100%;
-  resize: none;
-  transition: border-color 0.15s;
-  line-height: 1.7;
-}
-.field-textarea:focus { border-color: var(--ink); }
-.field-textarea::placeholder { color: var(--lighter); }
-
-/* Audio section */
-.audio-zone {
-  border: 1.5px dashed var(--rule);
-  padding: 28px 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.15s;
-  position: relative;
-}
-.audio-zone:hover { border-color: var(--lighter); }
-.audio-zone.has-audio { border-color: var(--ink); border-style: solid; }
-
-.audio-zone-icon {
-  font-family: 'Caveat', cursive;
-  font-size: 32px;
-  margin-bottom: 8px;
-  display: block;
-  color: var(--lighter);
-}
-.audio-zone.has-audio .audio-zone-icon { color: var(--ink); }
-
-.audio-zone-text {
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 14px;
-  color: var(--soft);
-}
-
-.audio-zone-meta {
-  margin-top: 8px;
-  font-family: 'Caveat', cursive;
-  font-size: 14px;
-  color: var(--ink);
-}
-
-.or-line {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: var(--lighter);
-  font-size: 12px;
-  font-style: italic;
-}
-.or-line::before, .or-line::after {
-  content: ''; flex: 1; height: 1px; background: var(--rule);
-}
-
-.btn-rec {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px;
-  border: 1px solid var(--rule);
-  background: white;
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 14px;
-  color: var(--soft);
-  cursor: pointer;
-  transition: all 0.15s;
-  width: 100%;
-}
-.btn-rec:hover { border-color: var(--red); color: var(--red); }
-.btn-rec.recording { border-color: var(--red); color: var(--red); }
-
-.rec-indicator {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--red);
-  flex-shrink: 0;
-}
-.btn-rec.recording .rec-indicator { animation: blink 1s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-/* Waveform mini */
-.mini-wave {
-  align-items: center;
-  gap: 2px;
-  height: 32px;
-  margin-top: 12px;
-  display: none;
-}
-.mini-wave.show { display: flex; }
-.mw-bar {
-  flex: 1;
-  border-radius: 1px;
-  background: var(--rule);
-  min-height: 3px;
-}
-
-.create-footer {
-  padding: 20px 28px 48px;
-  max-width: 480px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.btn-wrap {
-  width: 100%;
-  padding: 17px;
-  background: var(--ink);
-  color: white;
-  font-family: 'EB Garamond', serif;
-  font-size: 15px;
-  letter-spacing: 0.05em;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-.btn-wrap:disabled { opacity: 0.25; cursor: default; }
-.btn-wrap:not(:disabled):hover { opacity: 0.75; }
-
-/* ============================
-   SHARE PAGE
-============================ */
-#pg-share {
-  align-items: center;
-  justify-content: center;
-  padding: 48px 28px;
-  text-align: center;
-}
-
-.share-icon {
-  font-family: 'Caveat', cursive;
-  font-size: 48px;
-  margin-bottom: 24px;
-  display: block;
-}
-
-.share-title {
-  font-family: 'EB Garamond', serif;
-  font-size: 28px;
-  font-weight: 300;
-  line-height: 1.2;
-  margin-bottom: 6px;
-}
-.share-title em { font-style: italic; }
-
-.share-sub {
-  font-size: 13px;
-  color: var(--soft);
-  font-style: italic;
-  margin-bottom: 40px;
-}
-
-.link-display {
-  width: 100%;
-  max-width: 360px;
-  background: var(--off);
-  padding: 16px 20px;
-  font-family: 'Caveat', cursive;
-  font-size: 14px;
-  color: var(--soft);
-  word-break: break-all;
-  text-align: left;
-  margin-bottom: 16px;
-  line-height: 1.5;
-}
-
-.share-row {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  max-width: 360px;
-  margin-bottom: 36px;
-}
-
-.btn-copy-link {
-  flex: 1;
-  padding: 14px;
-  border: 1px solid var(--ink);
-  background: white;
-  font-family: 'EB Garamond', serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-copy-link:hover { background: var(--ink); color: white; }
-
-.btn-share-it {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  background: var(--ink);
-  color: white;
-  font-family: 'EB Garamond', serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-.btn-share-it:hover { opacity: 0.75; }
-
-.share-credit {
-  font-size: 11px;
-  color: var(--lighter);
-  font-style: italic;
-  letter-spacing: 0.05em;
-}
-
-.demo-audio-upload {
-  border: 1px dashed var(--rule);
-  padding: 10px 14px;
-  cursor: pointer;
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 13px;
-  color: var(--lighter);
-  transition: all 0.15s;
-  text-align: center;
-}
-.demo-audio-upload:hover { border-color: var(--ink); color: var(--soft); }
-.demo-audio-upload.loaded { border-color: var(--ink); border-style: solid; color: var(--ink); }
-
-/* ============================
-   PLAYER / LIST
-============================ */
-#pg-player {
-  background: white;
-}
-
-.player-top {
-  padding: 52px 28px 0;
-}
-
-.player-wordmark {
-  font-family: 'Caveat', cursive;
-  font-size: 20px;
-  color: var(--ink);
-  margin-bottom: 2px;
-}
-
-.player-from {
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 13px;
-  color: var(--soft);
-  margin-bottom: 48px;
-}
-
-.track-list {
-  padding: 0 28px;
-  flex: 1;
-}
-
-.track-entry {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--rule);
-  cursor: pointer;
-  transition: opacity 0.1s;
-}
-.track-entry:first-child { border-top: 1px solid var(--rule); }
-.track-entry:hover { opacity: 0.6; }
-
-.track-n {
-  font-family: 'Caveat', cursive;
-  font-size: 12px;
-  color: var(--lighter);
-  width: 18px;
-  flex-shrink: 0;
-  text-align: right;
-}
-
-.track-t {
-  font-family: 'EB Garamond', serif;
-  font-size: 20px;
-  font-style: italic;
-  color: var(--ink);
-  flex: 1;
-  line-height: 1.2;
-}
-
-.track-dur {
-  font-family: 'Caveat', cursive;
-  font-size: 12px;
-  color: var(--lighter);
-  flex-shrink: 0;
-}
-
-.player-footer {
-  padding: 32px 28px 52px;
-  text-align: center;
-}
-
-.player-footer-note {
-  font-size: 11px;
-  color: var(--lighter);
-  font-style: italic;
-}
-
-/* ============================
-   MODAL — MUSIC BOX PLAYER
-============================ */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 200;
-  display: flex;
-  align-items: flex-end;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.overlay.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.modal-sheet {
-  width: 100%;
-  background: white;
-  border-radius: 12px 12px 0 0;
-  transform: translateY(100%);
-  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
-  max-height: 92vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.overlay.open .modal-sheet {
-  transform: translateY(0);
-}
-
-.modal-drag-handle {
-  width: 36px; height: 4px;
-  background: var(--rule);
-  border-radius: 2px;
-  margin: 14px auto 0;
-  flex-shrink: 0;
-}
-
-.modal-inner {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 28px 52px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.modal-close-row {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
-}
-.modal-close-btn {
-  background: none; border: none; cursor: pointer;
-  font-size: 20px; color: var(--lighter);
-  padding: 4px; line-height: 1;
-}
-.modal-close-btn:hover { color: var(--ink); }
-
-.modal-title {
-  font-family: 'EB Garamond', serif;
-  font-size: 22px;
-  font-style: italic;
-  text-align: center;
-  color: var(--ink);
-  margin-bottom: 4px;
-  line-height: 1.25;
-}
-
-.modal-sub {
-  font-family: 'Caveat', cursive;
-  font-size: 13px;
-  color: var(--soft);
-  margin-bottom: 32px;
-  text-align: center;
-}
-
-/* ============================
-   SKETCH MUSIC BOX (player)
-============================ */
-.sketch-player-wrap {
-  width: 100%;
-  max-width: 320px;
-  position: relative;
-  margin-bottom: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* The tape strip coming out top */
-.tape-strip-area {
-  width: 90px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: -2px;
-  position: relative;
-  z-index: 1;
-}
-
-.tape-strip-svg {
-  width: 100%;
-}
-
-/* The box body */
-.box-body-svg {
-  width: 100%;
-  max-width: 300px;
-}
-
-/* Handle interaction area */
-.handle-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  width: 100%;
-}
-
-.handle-hint-text {
-  font-family: 'Caveat', cursive;
-  font-size: 16px;
-  color: var(--soft);
-  text-align: center;
-  transition: color 0.2s;
-}
-.handle-hint-text.active-color { color: var(--ink); }
-
-/* SVG handle wrapper */
-.handle-svg-wrap {
-  width: 100px;
-  height: 100px;
-  cursor: grab;
-  user-select: none;
-  touch-action: none;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.handle-svg-wrap:active { cursor: grabbing; }
-
-.handle-svg-wrap svg {
-  overflow: visible;
-}
-
-/* Time display */
-.time-display {
-  font-family: 'Caveat', cursive;
-  font-size: 15px;
-  color: var(--lighter);
-  text-align: center;
-  margin-top: 8px;
-  letter-spacing: 0.05em;
-}
-
-/* Mini waveform in modal */
-.modal-wave {
-  width: 100%;
-  max-width: 300px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  gap: 1.5px;
-  margin-bottom: 16px;
-}
-.modal-wave-bar {
-  flex: 1;
-  border-radius: 1px;
-  min-height: 3px;
-  transition: background 0.08s;
-}
-.modal-wave-bar.played { background: var(--ink); }
-.modal-wave-bar.current { background: var(--red); }
-.modal-wave-bar.unplayed { background: var(--rule); }
-
-/* Note message display */
-.modal-note-msg {
-  width: 100%;
-  max-width: 300px;
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 14px;
-  color: var(--soft);
-  text-align: center;
-  line-height: 1.7;
-  padding-top: 20px;
-  border-top: 1px solid var(--rule);
-  margin-top: 8px;
-}
-
-/* TOAST */
-.toast {
-  position: fixed;
-  bottom: 28px; left: 50%;
-  transform: translateX(-50%) translateY(16px);
-  background: var(--ink);
-  color: white;
-  padding: 10px 22px;
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 14px;
-  border-radius: 100px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s;
-  z-index: 999;
-  white-space: nowrap;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-input[type=file] { display: none; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+html,body{background:#fff;color:#111;font-family:Georgia,serif;font-size:15px;line-height:1.6;min-height:100vh}
+span[onclick],div[onclick]{cursor:pointer}
+
+.shell{max-width:390px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:#fff;position:relative}
+
+nav{padding:18px 28px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ebebeb;position:sticky;top:0;background:#fff;z-index:10}
+.brand{display:flex;flex-direction:column;gap:2px;cursor:pointer}
+.brand-name{font-family:'Caveat',cursive;font-size:22px;font-weight:600;line-height:1;color:#111}
+.brand-sub{font-style:italic;font-size:11px;color:#bbb}
+.nav-r{display:flex;align-items:center;gap:20px}
+
+.ava{width:28px;height:28px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-style:italic;font-size:11px;color:#fff;flex-shrink:0;cursor:pointer}
+
+.pg{display:none;flex-direction:column;flex:1;min-height:0}
+.pg.on{display:flex;animation:fadeup .18s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.back-row{display:flex;align-items:center;gap:6px;font-size:13px;color:#aaa;cursor:pointer;margin-bottom:28px;width:fit-content}
+.back-row:hover{color:#111}
+.section-pad{padding:28px 28px 40px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page-title{font-size:20px;line-height:1.2;margin-bottom:4px}
+.page-subtitle{font-size:12px;color:#bbb;font-style:italic;margin-bottom:24px}
+.divider{height:1px;background:#ebebeb;margin:0 0 0 0}
+.empty{text-align:center;padding:52px 0 20px;font-size:13px;color:#ccc;font-style:italic}
+.row-action{display:flex;justify-content:flex-end;margin-bottom:16px}
+.text-action{font-size:13px;color:#111;font-style:italic;display:flex;align-items:center;gap:5px;cursor:pointer}
+.text-action:hover{opacity:.45}
+
+.landing{padding:44px 28px 36px;flex:1;display:flex;flex-direction:column}
+.il-wrap{display:flex;justify-content:center;margin-bottom:40px;overflow:visible;width:100%}
+.l-head{font-style:italic;font-size:22px;line-height:1.5;margin-bottom:10px}
+.l-sub{font-size:13px;color:#aaa;line-height:1.9;margin-bottom:40px}
+.cta-main{font-size:15px;color:#111;display:block;margin-bottom:16px;cursor:pointer}
+.cta-main:hover{opacity:.45}
+.cta-sub{font-size:13px;color:#aaa;font-style:italic;display:block;cursor:pointer}
+.cta-sub:hover{opacity:.45}
+
+.tut-pg{padding:28px 28px 40px;flex:1;overflow-y:auto}
+.tut-step{display:flex;gap:16px;margin-bottom:32px;opacity:0;transform:translateY(12px);transition:opacity .4s ease,transform .4s ease}
+.tut-step.show{opacity:1;transform:translateY(0)}
+.tut-num{width:28px;height:28px;border-radius:50%;border:1px solid #111;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px}
+.tut-body{}
+.tut-label{font-size:11px;color:#bbb;font-style:italic;margin-bottom:3px;letter-spacing:.2px}
+.tut-head{font-size:16px;font-style:italic;margin-bottom:5px}
+.tut-desc{font-size:13px;color:#777;line-height:1.7}
+.tut-visual{margin-top:12px;background:#f8f8f8;border-radius:4px;padding:14px;display:flex;align-items:center;justify-content:center}
+.tut-cta{margin-top:32px;font-size:15px;color:#111;cursor:pointer;display:block}
+.tut-cta:hover{opacity:.45}
+
+.profile-hero{display:flex;gap:16px;align-items:flex-start;margin-bottom:20px}
+.profile-thumb{width:56px;height:56px;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.profile-info{flex:1;padding-top:3px}
+.profile-name{font-size:20px;line-height:1.2;margin-bottom:5px}
+.profile-meta{font-size:12px;color:#bbb;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.dot{color:#ddd}
+.profile-acts{display:flex;gap:14px;margin-left:4px;padding-top:4px;flex-shrink:0}
+.icon-btn{display:flex;align-items:center;color:#ccc;cursor:pointer}
+.icon-btn:hover{color:#111}
+
+.folder-grid{display:flex;flex-direction:column;gap:0}
+.folder-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #ebebeb;cursor:pointer}
+.folder-row:first-child{border-top:1px solid #ebebeb}
+.folder-row:hover .folder-name{opacity:.45}
+.folder-icon{width:38px;height:38px;background:#f5f5f5;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.folder-info{flex:1;min-width:0}
+.folder-name{font-size:15px;line-height:1.3;transition:opacity .15s}
+.folder-meta{font-size:12px;color:#bbb;margin-top:2px;display:flex;align-items:center;gap:6px}
+.badge{font-size:10px;color:#bbb;border:1px solid #e8e8e8;padding:1px 7px;border-radius:20px;font-style:italic;flex-shrink:0}
+.badge.pub{color:#111;border-color:#ccc}
+
+.folder-header{margin-bottom:20px}
+.folder-header-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.folder-title{font-size:22px;line-height:1.2}
+.folder-header-acts{display:flex;gap:14px;padding-top:4px}
+.folder-submeta{font-size:12px;color:#bbb;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+
+.track-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #ebebeb;cursor:pointer}
+.track-row:first-child{border-top:1px solid #ebebeb}
+.track-row:hover .tr-title{opacity:.45}
+.tr-icon{width:34px;height:34px;border-radius:50%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tr-body{flex:1;min-width:0}
+.tr-title{font-style:italic;font-size:15px;line-height:1.35;transition:opacity .15s;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr-meta{display:flex;align-items:center;gap:5px;font-size:12px;color:#c0c0c0;margin-top:2px}
+.list-foot{text-align:center;padding:32px 0 8px;font-size:12px;color:#d0d0d0;font-style:italic}
+
+.fld{margin-bottom:24px}
+.fld label{display:block;font-size:12px;color:#bbb;font-style:italic;margin-bottom:8px}
+.fld input,.fld textarea,.fld select{
+  border:none;border-bottom:1px solid #ebebeb;padding:7px 0;
+  font-size:15px;font-family:Georgia,serif;color:#111;font-style:italic;
+  background:transparent;outline:none;transition:border-color .2s;
+  line-height:1.5;width:100%;display:block;
+  -webkit-appearance:none;appearance:none;border-radius:0;
+}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-bottom-color:#111}
+.fld input::placeholder,.fld textarea::placeholder{color:#d0d0d0}
+.fld select{color:#111;padding-right:20px;background-image:none}
+.fld select option{font-style:normal}
+.radio-group{display:flex;gap:20px;padding:4px 0}
+.radio-opt{display:flex;align-items:center;gap:7px;font-size:14px;color:#777;cursor:pointer;font-style:italic}
+.radio-opt input{width:auto;border:none;accent-color:#111}
+
+.az{border:1px dashed #e0e0e0;padding:22px 20px;text-align:center;transition:border-color .2s;margin-bottom:14px;cursor:pointer}
+.az:hover{border-color:#bbb}
+.az-lbl{font-size:14px;color:#aaa;font-style:italic;margin-top:8px}
+.az-hint{font-size:11px;color:#ccc;margin-top:3px;letter-spacing:.3px}
+.az.filled{border-style:solid;border-color:#111}
+.az.filled .az-lbl{color:#111}
+.or-sep{display:flex;align-items:center;gap:12px;margin:12px 0;font-size:12px;color:#d0d0d0;font-style:italic}
+.or-sep::before,.or-sep::after{content:'';flex:1;height:1px;background:#ebebeb}
+.rec-lnk{font-size:14px;color:#111;padding:10px 0;display:flex;align-items:center;gap:10px;font-style:italic;width:100%;cursor:pointer}
+.rec-lnk:hover{opacity:.5}
+.rec-lnk.rr{color:#DD4444}
+.rdot{width:6px;height:6px;border-radius:50%;background:#DD4444;flex-shrink:0}
+.rdot.p{animation:blink .9s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.mwv{display:flex;align-items:flex-end;gap:2px;height:20px;justify-content:center;margin:8px 0;opacity:0;transition:opacity .3s}
+.mwv.show{opacity:1}
+.mwv span{display:block;width:3px;border-radius:1px;background:#e8e8e8}
+.cc{text-align:right;font-size:11px;color:#ccc;margin-top:4px}
+.submit-lnk{font-size:15px;font-style:italic;color:#d0d0d0;padding:20px 0 4px;display:block;text-align:right;transition:color .15s;width:100%;cursor:default}
+.submit-lnk.go{color:#111;cursor:pointer}
+.submit-lnk.go:hover{opacity:.5}
+.err-msg{font-size:12px;color:#DD4444;font-style:italic;margin-top:8px;display:none}
+.err-msg.show{display:block}
+
+.share-pg{padding:56px 28px 40px;flex:1;text-align:center;display:flex;flex-direction:column;align-items:center}
+.sh-head{font-size:22px;font-style:italic;margin-bottom:8px}
+.sh-sub{font-size:13px;color:#aaa;margin-bottom:28px}
+.sh-link{font-size:13px;background:#f8f8f8;padding:12px 16px;text-align:left;color:#888;margin-bottom:28px;width:100%;display:block;word-break:break-all;line-height:1.6}
+.sh-row{display:flex;gap:28px;justify-content:center;margin-bottom:16px}
+.sh-btn{font-size:14px;color:#111;font-style:italic;cursor:pointer}
+.sh-btn:hover{opacity:.45}
+.sh-prev{font-size:13px;color:#aaa;font-style:italic;display:block;margin-bottom:28px;cursor:pointer}
+.sh-prev:hover{color:#111}
+.sh-tag{font-size:11px;color:#ccc}
+
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.mover.open{display:flex}
+.msheet{background:#fff;border-radius:12px 12px 0 0;width:100%;max-width:390px;max-height:90vh;overflow-y:auto;padding:14px 28px 48px;animation:slideup .22s ease;-webkit-overflow-scrolling:touch}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mdrag{width:28px;height:2px;background:#e0e0e0;border-radius:2px;margin:0 auto 22px}
+.mhdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.mtitle{font-style:italic;font-size:18px;line-height:1.4;max-width:220px}
+.mclose{font-size:15px;color:#ccc;cursor:pointer;line-height:1}
+.mclose:hover{color:#111}
+.mtime{font-size:12px;color:#bbb;margin-bottom:16px}
+.mwf-bar{display:flex;align-items:flex-end;gap:2px;height:26px;margin-bottom:20px}
+.mwf-bar span{display:block;flex:1;border-radius:1px;transition:background .08s}
+.bp{background:#111}.bc{background:#DD4444}.bu{background:#e8e8e8}
+.mbx{display:flex;justify-content:center;margin-bottom:18px;overflow:visible;width:100%}
+.harea{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:12px;user-select:none}
+.hcv-el{touch-action:none;cursor:grab}
+.hcv-el:active{cursor:grabbing}
+.hhint{font-size:12px;color:#bbb;font-style:italic;text-align:center;transition:color .15s;height:16px}
+.hhint.act{color:#DD4444}.hhint.dn{color:#111}
+.mnote-wrap{border-top:1px solid #ebebeb;padding-top:14px;margin-top:6px}
+.mnote-wrap p{font-size:13px;font-style:italic;color:#999;line-height:1.85}
+
+.bsheet-over{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:300;display:none;align-items:flex-end;justify-content:center}
+.bsheet-over.open{display:flex}
+.bsheet{background:#fff;border-radius:12px 12px 0 0;width:100%;max-width:390px;padding:14px 0 40px;animation:slideup .2s ease}
+.bsheet-drag{width:28px;height:2px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px}
+.bsheet-item{padding:14px 28px;font-size:15px;color:#111;cursor:pointer;font-family:Georgia,serif;font-style:italic;display:flex;align-items:center;gap:12px}
+.bsheet-item:hover{background:#f8f8f8}
+.bsheet-item.danger{color:#DD4444}
+.bsheet-item svg{flex-shrink:0;color:#bbb}
+
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(8px);background:#111;color:#fff;font-family:Georgia,serif;font-style:italic;font-size:13px;padding:10px 20px;border-radius:3px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+footer{padding:18px 28px;border-top:1px solid #ebebeb;text-align:center;font-size:11px;color:#ccc;font-style:italic;margin-top:auto}
 </style>
 </head>
 <body>
+<div class="shell" id="app">
 
-<!-- ======================== LANDING ======================== -->
-<div id="pg-land" class="page active">
-  <div class="land-top">
-    <div class="land-wordmark">whisper</div>
-    <div class="land-tagline">special voice notes</div>
-  </div>
-
-  <div class="land-hero">
-    <div class="sketch-box">
-      <!-- Rough sketch SVG of a music box, top-down view like the reference photo -->
-      <svg viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Tape strip coming out top -->
-        <rect x="76" y="0" width="48" height="80" rx="2" fill="none" stroke="#ccc" stroke-width="1.5" stroke-dasharray="2 1"/>
-        <!-- Tape holes on strip -->
-        <circle cx="88" cy="12" r="2.5" fill="#ddd"/>
-        <circle cx="100" cy="8" r="2.5" fill="#ddd"/>
-        <circle cx="112" cy="16" r="2.5" fill="#ddd"/>
-        <circle cx="88" cy="24" r="2.5" fill="#ddd"/>
-        <circle cx="112" cy="28" r="2.5" fill="#ddd"/>
-        <circle cx="100" cy="36" r="2.5" fill="#ddd"/>
-        <circle cx="88" cy="44" r="2.5" fill="#ddd"/>
-        <circle cx="112" cy="40" r="2.5" fill="#ddd"/>
-        <circle cx="100" cy="52" r="2.5" fill="#ddd"/>
-        <circle cx="88" cy="60" r="2.5" fill="#ddd"/>
-        <circle cx="112" cy="56" r="2.5" fill="#ddd"/>
-        <circle cx="100" cy="68" r="2.5" fill="#ddd"/>
-        <!-- Direction arrow on tape -->
-        <path d="M100 2 L96 7 M100 2 L104 7" stroke="#bbb" stroke-width="1" stroke-linecap="round"/>
-
-        <!-- Box outer (rough, slightly imperfect) -->
-        <path d="M18 85 L182 84 L184 260 L16 261 Z" fill="white" stroke="#aaa" stroke-width="2" stroke-linejoin="round"/>
-        <!-- Box wood grain lines (rough) -->
-        <path d="M20 110 Q100 108 182 110" stroke="#eee" stroke-width="1"/>
-        <path d="M20 135 Q100 133 182 135" stroke="#eee" stroke-width="1"/>
-        <path d="M20 160 Q100 158 182 160" stroke="#eee" stroke-width="1"/>
-        <path d="M20 185 Q100 183 182 185" stroke="#eee" stroke-width="1"/>
-        <path d="M20 210 Q100 208 182 210" stroke="#eee" stroke-width="1"/>
-        <path d="M20 235 Q100 233 182 235" stroke="#eee" stroke-width="1"/>
-
-        <!-- Mechanism inside box (the metal comb part) -->
-        <rect x="60" y="92" width="80" height="60" rx="2" fill="#f5f5f5" stroke="#bbb" stroke-width="1.5"/>
-        <!-- Mechanism tines -->
-        <line x1="68" y1="104" x2="68" y2="148" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="74" y1="104" x2="74" y2="150" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="80" y1="104" x2="80" y2="147" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="86" y1="104" x2="86" y2="149" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="92" y1="104" x2="92" y2="148" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="98" y1="104" x2="98" y2="150" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="104" y1="104" x2="104" y2="147" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="110" y1="104" x2="110" y2="149" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="116" y1="104" x2="116" y2="148" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="122" y1="104" x2="122" y2="150" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="128" y1="104" x2="128" y2="147" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="134" y1="104" x2="134" y2="149" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/>
-
-        <!-- Handle sticking out right side -->
-        <line x1="184" y1="165" x2="210" y2="165" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="210" cy="165" r="7" fill="none" stroke="#aaa" stroke-width="2"/>
-        <circle cx="210" cy="158" r="4" fill="none" stroke="#aaa" stroke-width="2"/>
-        <line x1="210" y1="158" x2="210" y2="154" stroke="#aaa" stroke-width="2" stroke-linecap="round"/>
-
-        <!-- Tape coming out bottom of mechanism -->
-        <rect x="76" y="152" width="48" height="108" rx="2" fill="none" stroke="#ddd" stroke-width="1.2" stroke-dasharray="2 1"/>
-        <circle cx="88" cy="164" r="2" fill="#eee"/>
-        <circle cx="112" cy="172" r="2" fill="#eee"/>
-        <circle cx="100" cy="180" r="2" fill="#eee"/>
-        <circle cx="88" cy="192" r="2" fill="#eee"/>
-        <circle cx="112" cy="200" r="2" fill="#eee"/>
-        <circle cx="100" cy="212" r="2" fill="#eee"/>
-        <circle cx="88" cy="224" r="2" fill="#eee"/>
-        <circle cx="112" cy="232" r="2" fill="#eee"/>
-        <circle cx="100" cy="244" r="2" fill="#eee"/>
-      </svg>
+  <nav>
+    <div class="brand" onclick="goHome()">
+      <span class="brand-name">whisper</span>
+      <span class="brand-sub">by senaslowblog</span>
     </div>
-  </div>
-
-  <div class="land-bottom">
-    <h1 class="land-headline">Leave a voice,<br><em>they'll turn to hear.</em></h1>
-    <p class="land-desc">Record your voice. Send a link. They turn a handle to listen — like a music box, but it's you.</p>
-    <button class="btn-main" onclick="showPage('pg-create')">Create a note</button>
-    <div style="display:flex;gap:10px;align-items:stretch">
-      <button class="btn-ghost" style="flex:1" onclick="startDemo()">See how it works</button>
-      <button class="btn-ghost" style="width:44px;flex-shrink:0;font-size:16px;padding:0" onclick="toggleDemoSettings()" title="Configure demo">⚙</button>
+    <div class="nav-r">
+      <div class="ava" onclick="showPg('pg-profile')">S</div>
     </div>
+  </nav>
 
-    <!-- DEMO SETTINGS PANEL -->
-    <div id="demoSettings" style="display:none;margin-top:16px;border:1px solid var(--rule);padding:20px 16px;background:var(--off)">
-      <div style="font-family:'Caveat',cursive;font-size:13px;color:var(--soft);margin-bottom:16px;letter-spacing:0.05em">demo settings</div>
-      <div style="display:flex;flex-direction:column;gap:14px">
-        <!-- Track 1 -->
-        <div style="border-bottom:1px solid var(--rule);padding-bottom:14px">
-          <div style="font-family:'Caveat',cursive;font-size:11px;color:var(--lighter);margin-bottom:8px;letter-spacing:0.08em">TRACK 1</div>
-          <input class="field-input" id="dTitle0" placeholder="title..." value="for you, on this morning" style="font-size:14px;margin-bottom:6px">
-          <input class="field-input" id="dMsg0" placeholder="note... (optional)" value="I wanted to say this out loud." style="font-size:13px;font-style:italic;margin-bottom:8px">
-          <div class="demo-audio-upload" id="dAudio0" onclick="document.getElementById('dFile0').click()">
-            <span id="dAudioLabel0">&#9835; upload audio for this track</span>
-          </div>
-          <input type="file" id="dFile0" accept="audio/*" onchange="handleDemoFile(0, this.files[0])">
-        </div>
-        <!-- Track 2 -->
-        <div style="border-bottom:1px solid var(--rule);padding-bottom:14px">
-          <div style="font-family:'Caveat',cursive;font-size:11px;color:var(--lighter);margin-bottom:8px;letter-spacing:0.08em">TRACK 2</div>
-          <input class="field-input" id="dTitle1" placeholder="title..." value="things I should have said sooner" style="font-size:14px;margin-bottom:6px">
-          <input class="field-input" id="dMsg1" placeholder="note... (optional)" value="" style="font-size:13px;font-style:italic;margin-bottom:8px">
-          <div class="demo-audio-upload" id="dAudio1" onclick="document.getElementById('dFile1').click()">
-            <span id="dAudioLabel1">&#9835; upload audio for this track</span>
-          </div>
-          <input type="file" id="dFile1" accept="audio/*" onchange="handleDemoFile(1, this.files[0])">
-        </div>
-        <!-- Track 3 -->
-        <div>
-          <div style="font-family:'Caveat',cursive;font-size:11px;color:var(--lighter);margin-bottom:8px;letter-spacing:0.08em">TRACK 3</div>
-          <input class="field-input" id="dTitle2" placeholder="title..." value="goodnight, always" style="font-size:14px;margin-bottom:6px">
-          <input class="field-input" id="dMsg2" placeholder="note... (optional)" value="close your eyes." style="font-size:13px;font-style:italic;margin-bottom:8px">
-          <div class="demo-audio-upload" id="dAudio2" onclick="document.getElementById('dFile2').click()">
-            <span id="dAudioLabel2">&#9835; upload audio for this track</span>
-          </div>
-          <input type="file" id="dFile2" accept="audio/*" onchange="handleDemoFile(2, this.files[0])">
-        </div>
-      </div>
-      <button class="btn-main" style="margin-top:20px" onclick="saveDemoSettings()">Save &amp; preview &#8594;</button>
-    </div>
-  </div>
-</div>
-
-<!-- ======================== CREATE ======================== -->
-<div id="pg-create" class="page">
-  <div class="pg-header">
-    <button class="back-btn" onclick="showPage('pg-land')">←</button>
-    <span class="pg-header-label">new voice note</span>
-  </div>
-
-  <div class="create-body" id="createBody">
-
-    <div class="field-group">
-      <label class="field-label">title</label>
-      <input class="field-input" id="noteTitle" type="text" placeholder="for you, on this day…" maxlength="60" oninput="checkReady()">
-    </div>
-
-    <div class="field-group">
-      <label class="field-label">audio</label>
-      <div class="audio-zone" id="audioZone" onclick="document.getElementById('fileIn').click()">
-        <span class="audio-zone-icon" id="azIcon">♪</span>
-        <div class="audio-zone-text" id="azText">tap to choose an audio file</div>
-        <div class="audio-zone-meta hidden" id="azMeta"></div>
-      </div>
-      <input type="file" id="fileIn" accept="audio/*" onchange="handleFile(this.files[0])">
-
-      <div class="mini-wave" id="miniWave"></div>
-
-      <div class="or-line">or</div>
-
-      <button class="btn-rec" id="recBtn" onclick="toggleRec()">
-        <div class="rec-indicator"></div>
-        <span id="recBtnLabel">record your voice</span>
-      </button>
-    </div>
-
-    <div class="field-group">
-      <label class="field-label">a little note <span style="color:var(--lighter);font-style:italic">(optional)</span></label>
-      <textarea class="field-textarea" id="noteMsg" rows="2" placeholder="something you want them to read first…"></textarea>
-    </div>
-
-  </div>
-
-  <div class="create-footer">
-    <button class="btn-wrap" id="wrapBtn" disabled onclick="doWrap()">Wrap it →</button>
-  </div>
-</div>
-
-<!-- ======================== SHARE ======================== -->
-<div id="pg-share" class="page">
-  <span class="share-icon">✉</span>
-  <h2 class="share-title">Your note<br><em>is ready.</em></h2>
-  <p class="share-sub">Link expires in 7 days</p>
-  <div class="link-display" id="shareUrl">https://whisper.sena/m/xxxxxxxx</div>
-  <div class="share-row">
-    <button class="btn-copy-link" onclick="copyUrl()">Copy link</button>
-    <button class="btn-share-it" onclick="shareIt()">Share ↗</button>
-  </div>
-  <button class="btn-ghost" style="max-width:340px;margin-bottom:24px" onclick="previewNote()">Preview your note →</button>
-  <p class="share-credit">whisper — special voice notes by sena</p>
-</div>
-
-<!-- ======================== PLAYER ======================== -->
-<div id="pg-player" class="page">
-  <div class="player-top">
-    <div class="player-wordmark">whisper</div>
-    <div class="player-from" id="playerFrom">someone left you a voice note</div>
-  </div>
-
-  <div class="track-list" id="trackList">
-    <!-- generated -->
-  </div>
-
-  <div class="player-footer">
-    <p class="player-footer-note">turn the handle to listen</p>
-  </div>
-</div>
-
-<!-- ======================== MODAL — MUSIC BOX ======================== -->
-<div class="overlay" id="overlay" onclick="maybeCloseOverlay(event)">
-  <div class="modal-sheet" id="modalSheet">
-    <div class="modal-drag-handle"></div>
-    <div class="modal-inner">
-
-      <div class="modal-close-row">
-        <button class="modal-close-btn" onclick="closeModal()">✕</button>
-      </div>
-
-      <div class="modal-title" id="modalTitle">—</div>
-      <div class="modal-sub" id="modalSub">0:00 / 0:00</div>
-
-      <!-- Waveform -->
-      <div class="modal-wave" id="modalWave"></div>
-
-      <div class="sketch-player-wrap">
-        <!-- Tape coming out top of box -->
-        <div class="tape-strip-area">
-          <svg class="tape-strip-svg" viewBox="0 0 90 100" fill="none">
-            <!-- tape strip -->
-            <rect x="5" y="0" width="80" height="100" rx="2" fill="white" stroke="#ddd" stroke-width="1.5"/>
-            <!-- column lines -->
-            <line x1="20" y1="0" x2="20" y2="100" stroke="#eee" stroke-width="0.8"/>
-            <line x1="35" y1="0" x2="35" y2="100" stroke="#eee" stroke-width="0.8"/>
-            <line x1="50" y1="0" x2="50" y2="100" stroke="#eee" stroke-width="0.8"/>
-            <line x1="65" y1="0" x2="65" y2="100" stroke="#eee" stroke-width="0.8"/>
-            <!-- holes — these animate -->
-            <g id="tapeHolesTop"></g>
-            <!-- arrow indicator -->
-            <path d="M45 6 L41 12 M45 6 L49 12" stroke="#bbb" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-        </div>
-
-        <!-- Box body -->
-        <svg class="box-body-svg" viewBox="0 0 300 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- outer box rough shape -->
-          <path d="M8 8 L292 7 L294 174 L6 175 Z" fill="white" stroke="#bbb" stroke-width="2.5" stroke-linejoin="round"/>
-          <!-- wood grain -->
-          <path d="M8 38 Q150 36 292 38" stroke="#f0f0f0" stroke-width="1.2"/>
-          <path d="M8 68 Q150 66 292 68" stroke="#f0f0f0" stroke-width="1.2"/>
-          <path d="M8 98 Q150 96 292 98" stroke="#f0f0f0" stroke-width="1.2"/>
-          <path d="M8 128 Q150 126 292 128" stroke="#f0f0f0" stroke-width="1.2"/>
-          <path d="M8 158 Q150 156 292 158" stroke="#f0f0f0" stroke-width="1.2"/>
-
-          <!-- mechanism housing -->
-          <rect x="70" y="14" width="160" height="90" rx="3" fill="#fafafa" stroke="#ccc" stroke-width="1.5"/>
-
-          <!-- comb tines -->
-          <line x1="82" y1="24" x2="82" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="90" y1="24" x2="90" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="98" y1="24" x2="98" y2="99" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="106" y1="24" x2="106" y2="101" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="114" y1="24" x2="114" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="122" y1="24" x2="122" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="130" y1="24" x2="130" y2="99" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="138" y1="24" x2="138" y2="101" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="146" y1="24" x2="146" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="154" y1="24" x2="154" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="162" y1="24" x2="162" y2="99" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="170" y1="24" x2="170" y2="101" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="178" y1="24" x2="178" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="186" y1="24" x2="186" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="194" y1="24" x2="194" y2="99" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="202" y1="24" x2="202" y2="101" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="210" y1="24" x2="210" y2="100" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="218" y1="24" x2="218" y2="102" stroke="#d0d0d0" stroke-width="1.8" stroke-linecap="round"/>
-
-          <!-- Active tine highlight (animated via JS class on tine-active) -->
-          <line id="activeTine" x1="150" y1="24" x2="150" y2="101" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" opacity="0"/>
-
-          <!-- Handle shaft -->
-          <line x1="294" y1="88" x2="318" y2="88" stroke="#aaa" stroke-width="3.5" stroke-linecap="round"/>
-
-          <!-- Handle group — rotates in JS -->
-          <g id="handleGroup" transform="rotate(0, 318, 88)">
-            <!-- L-arm -->
-            <line x1="318" y1="88" x2="318" y2="64" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
-            <!-- knob -->
-            <circle cx="318" cy="56" r="9" fill="none" stroke="#999" stroke-width="2.5"/>
-            <circle cx="318" cy="56" r="4" fill="#ddd" stroke="#aaa" stroke-width="1.5"/>
-          </g>
+  <div class="pg on" id="pg-landing">
+    <div class="landing">
+      <div class="il-wrap">
+        <svg width="100%" viewBox="0 0 250 150" fill="none" style="max-width:250px;display:block;overflow:visible">
+          <rect x="14" y="72" width="182" height="70" rx="3" fill="#f9f9f9" stroke="#111" stroke-width="1.3"/>
+          <rect x="14" y="72" width="182" height="9" fill="#f3f3f3"/>
+          <line x1="14" y1="81" x2="196" y2="81" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M22 95 Q65 93 115 95.5 Q152 94 188 96" stroke="#e8e8e8" stroke-width=".85" fill="none" stroke-linecap="round"/>
+          <path d="M20 107 Q68 105 120 107.5 Q155 106 188 108" stroke="#e8e8e8" stroke-width=".85" fill="none" stroke-linecap="round"/>
+          <path d="M20 119 Q70 117 122 119.5 Q156 118 188 120" stroke="#e8e8e8" stroke-width=".85" fill="none" stroke-linecap="round"/>
+          <path d="M22 131 Q72 129 124 131.5 Q158 130 188 132" stroke="#e8e8e8" stroke-width=".85" fill="none" stroke-linecap="round"/>
+          <rect x="14" y="60" width="138" height="16" rx="1" fill="#fff" stroke="#111" stroke-width="1.2"/>
+          <rect x="14" y="60" width="138" height="4" fill="#f0f0f0"/>
+          <line x1="20" y1="66" x2="20" y2="79" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="26" y1="66" x2="26" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="32" y1="66" x2="32" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="38" y1="66" x2="38" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="44" y1="66" x2="44" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="50" y1="66" x2="50" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="56" y1="66" x2="56" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="62" y1="66" x2="62" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="68" y1="66" x2="68" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="74" y1="66" x2="74" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="80" y1="66" x2="80" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="86" y1="66" x2="86" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="92" y1="66" x2="92" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="98" y1="66" x2="98" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="104" y1="66" x2="104" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="110" y1="66" x2="110" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="116" y1="66" x2="116" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="122" y1="66" x2="122" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="128" y1="66" x2="128" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="134" y1="66" x2="134" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="140" y1="66" x2="140" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="146" y1="66" x2="146" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <rect x="44" y="6" width="76" height="58" rx="1" fill="#fff" stroke="#111" stroke-width="1.2"/>
+          <rect x="44" y="6" width="76" height="3" fill="#f5f5f5"/>
+          <line x1="52" y1="6" x2="52" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="60" y1="6" x2="60" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="68" y1="6" x2="68" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="76" y1="6" x2="76" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="84" y1="6" x2="84" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="92" y1="6" x2="92" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="100" y1="6" x2="100" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="108" y1="6" x2="108" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="116" y1="6" x2="116" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="14" x2="120" y2="14" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="23" x2="120" y2="23" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="32" x2="120" y2="32" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="41" x2="120" y2="41" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="50" x2="120" y2="50" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="59" x2="120" y2="59" stroke="#e8e8e8" stroke-width=".7"/>
+          <circle cx="52" cy="10" r="2.8" fill="#111"/>
+          <circle cx="76" cy="10" r="2.8" fill="#111"/>
+          <circle cx="108" cy="10" r="2.8" fill="#111"/>
+          <circle cx="60" cy="19" r="2.8" fill="#111"/>
+          <circle cx="92" cy="19" r="2.8" fill="#111"/>
+          <circle cx="116" cy="28" r="2.8" fill="#111"/>
+          <circle cx="68" cy="28" r="2.8" fill="#111"/>
+          <circle cx="52" cy="37" r="2.8" fill="#111"/>
+          <circle cx="100" cy="37" r="2.8" fill="#111"/>
+          <circle cx="84" cy="46" r="2.8" fill="#111"/>
+          <circle cx="60" cy="55" r="2.8" fill="#111"/>
+          <circle cx="108" cy="55" r="2.8" fill="#111"/>
+          <line x1="196" y1="104" x2="214" y2="104" stroke="#111" stroke-width="1.9" stroke-linecap="round"/>
+          <circle cx="216" cy="104" r="10" fill="#f5f5f5" stroke="#111" stroke-width="1.3"/>
+          <circle cx="216" cy="104" r="4.5" fill="#fff" stroke="#111" stroke-width="1"/>
+          <circle cx="216" cy="104" r="1.8" fill="#111"/>
         </svg>
       </div>
+      <p class="l-head">Leave a voice, they'll turn to hear.</p>
+      <p class="l-sub">Record your voice. Send a link. They turn a handle to listen — like a music box, but it's you.</p>
+      <span class="cta-main" onclick="showPg('pg-profile')">Go to my profile →</span>
+      <span class="cta-sub" onclick="startTutorial()">See how it works</span>
+    </div>
+    <footer>whisper — voice notes by sena</footer>
+  </div>
 
-      <div class="handle-area">
-        <!-- Rotatable handle interaction zone -->
-        <div class="handle-svg-wrap" id="handleWrap"
-          onmousedown="handleDragStart(event)"
-          ontouchstart="handleDragStart(event)">
-          <svg width="100" height="100" viewBox="0 0 100 100" overflow="visible">
-            <!-- outer ring hint -->
-            <circle cx="50" cy="50" r="44" fill="none" stroke="#f0f0f0" stroke-width="1.5" stroke-dasharray="4 4"/>
-            <!-- handle arm that rotates -->
-            <g id="handleInteractiveArm" transform-origin="50 50" style="transform-origin:50px 50px; transform:rotate(0deg)">
-              <!-- center pivot -->
-              <circle cx="50" cy="50" r="8" fill="#f0f0f0" stroke="#ccc" stroke-width="1.5"/>
-              <!-- arm line -->
-              <line x1="50" y1="50" x2="50" y2="12" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
-              <!-- knob at end -->
-              <circle cx="50" cy="12" r="10" fill="white" stroke="#bbb" stroke-width="2"/>
-              <circle cx="50" cy="12" r="5" fill="#e8e8e8" stroke="#ccc" stroke-width="1.5"/>
-              <!-- direction arrows -->
-              <path d="M70 30 A30 30 0 0 1 72 50" stroke="#ddd" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-              <path d="M72 50 L68 46 M72 50 L76 47" stroke="#ddd" stroke-width="1.5" stroke-linecap="round"/>
-            </g>
-          </svg>
+  <div class="pg" id="pg-tutorial">
+    <div class="tut-pg" id="tut-container">
+      <span class="back-row" onclick="showPg('pg-landing')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+        back
+      </span>
+
+      <div class="tut-step" id="ts1">
+        <div class="tut-num">1</div>
+        <div class="tut-body">
+          <div class="tut-label">create</div>
+          <div class="tut-head">Make a folder</div>
+          <div class="tut-desc">Group your whispers into folders — a birthday, a trip, a thought you wanted to save. Each folder can be private or unlisted.</div>
+          <div class="tut-visual">
+            <svg width="180" height="52" viewBox="0 0 180 52" fill="none">
+              <rect x="2" y="10" width="176" height="38" rx="3" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+              <rect x="14" y="22" width="24" height="14" rx="2" fill="#f0f0f0"/>
+              <rect x="10" y="18" width="32" height="4" rx="1" fill="#f0f0f0"/>
+              <line x1="46" y1="24" x2="46" y2="38" stroke="#ebebeb" stroke-width=".5"/>
+              <text x="54" y="31" font-family="Georgia,serif" font-size="11" fill="#111" font-style="italic">for my sister</text>
+              <text x="54" y="43" font-family="Georgia,serif" font-size="10" fill="#bbb">0 whispers · private</text>
+            </svg>
+          </div>
         </div>
-        <div class="handle-hint-text" id="handleHint">turn clockwise to listen</div>
-        <div class="time-display" id="modalTime">0:00 / 0:00</div>
       </div>
 
-      <div class="modal-note-msg hidden" id="modalMsg"></div>
+      <div class="tut-step" id="ts2">
+        <div class="tut-num">2</div>
+        <div class="tut-body">
+          <div class="tut-label">record</div>
+          <div class="tut-head">Add a whisper</div>
+          <div class="tut-desc">Open any folder and tap "add whisper." Record your voice directly or upload an audio file. Give it a title and an optional message.</div>
+          <div class="tut-visual">
+            <svg width="180" height="64" viewBox="0 0 180 64" fill="none">
+              <circle cx="90" cy="32" r="22" fill="#111"/>
+              <rect x="84" y="16" width="12" height="22" rx="6" fill="#fff"/>
+              <path d="M78 34 Q78 42 90 42 Q102 42 102 34" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+              <line x1="90" y1="42" x2="90" y2="50" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="84" y1="50" x2="96" y2="50" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
 
+      <div class="tut-step" id="ts3">
+        <div class="tut-num">3</div>
+        <div class="tut-body">
+          <div class="tut-label">share</div>
+          <div class="tut-head">Send the link</div>
+          <div class="tut-desc">After saving, you get a unique link. Share it however you like — a text, an email, a note left on a pillow.</div>
+          <div class="tut-visual">
+            <svg width="180" height="44" viewBox="0 0 180 44" fill="none">
+              <rect x="2" y="6" width="148" height="32" rx="3" fill="#f8f8f8" stroke="#ebebeb" stroke-width="1"/>
+              <text x="12" y="26" font-family="Georgia,serif" font-size="10" fill="#999">whisper.sena.blog/m/x7k2p</text>
+              <rect x="156" y="6" width="22" height="32" rx="3" fill="#111"/>
+              <text x="162" y="26" font-family="Georgia,serif" font-size="10" fill="#fff">↗</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="tut-step" id="ts4">
+        <div class="tut-num">4</div>
+        <div class="tut-body">
+          <div class="tut-label">listen</div>
+          <div class="tut-head">They turn the handle</div>
+          <div class="tut-desc">When they open the link, they see a music box. Turning the handle clockwise plays your voice — no play button, no interface, just the gesture of listening.</div>
+          <div class="tut-visual">
+            <svg width="180" height="80" viewBox="0 0 180 80" fill="none">
+              <rect x="10" y="38" width="130" height="36" rx="2" fill="#f9f9f9" stroke="#111" stroke-width="1"/>
+              <rect x="10" y="28" width="80" height="12" rx="1" fill="#fff" stroke="#111" stroke-width="1"/>
+              <line x1="16" y1="33" x2="16" y2="43" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="22" y1="33" x2="22" y2="45" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="28" y1="33" x2="28" y2="42" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="34" y1="33" x2="34" y2="45" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="40" y1="33" x2="40" y2="42" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="46" y1="33" x2="46" y2="45" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="52" y1="33" x2="52" y2="42" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="58" y1="33" x2="58" y2="45" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="64" y1="33" x2="64" y2="42" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="70" y1="33" x2="70" y2="45" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="76" y1="33" x2="76" y2="42" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <line x1="82" y1="33" x2="82" y2="45" stroke="#c8c8c8" stroke-width="1" stroke-linecap="round"/>
+              <rect x="30" y="8" width="44" height="24" rx="1" fill="#fff" stroke="#111" stroke-width="1"/>
+              <line x1="38" y1="8" x2="38" y2="32" stroke="#e8e8e8" stroke-width=".7"/>
+              <line x1="46" y1="8" x2="46" y2="32" stroke="#e8e8e8" stroke-width=".7"/>
+              <line x1="54" y1="8" x2="54" y2="32" stroke="#e8e8e8" stroke-width=".7"/>
+              <line x1="62" y1="8" x2="62" y2="32" stroke="#e8e8e8" stroke-width=".7"/>
+              <circle cx="38" cy="13" r="2" fill="#111"/>
+              <circle cx="54" cy="20" r="2" fill="#111"/>
+              <circle cx="46" cy="27" r="2" fill="#111"/>
+              <circle cx="66" cy="14" r="2" fill="#111"/>
+              <line x1="140" y1="54" x2="154" y2="54" stroke="#111" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="156" cy="54" r="7" fill="#f5f5f5" stroke="#111" stroke-width="1.1"/>
+              <circle cx="156" cy="54" r="3" fill="#fff" stroke="#111" stroke-width=".8"/>
+              <circle cx="156" cy="54" r="1.3" fill="#111"/>
+              <!-- Rotating arrow hint -->
+              <path d="M165 46 A14 14 0 0 1 172 54" stroke="#DD4444" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+              <polyline points="169,42 172,46 175,43" stroke="#DD4444" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <span class="tut-cta" onclick="showPg('pg-profile')">Start recording →</span>
+    </div>
+    <footer>whisper — voice notes by sena</footer>
+  </div>
+
+  <div class="pg" id="pg-profile">
+    <div class="section-pad">
+      <div class="profile-hero">
+        <div class="profile-thumb">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"><circle cx="11" cy="8" r="4"/><path d="M3 19a8 8 0 0 1 16 0"/></svg>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name">sena</div>
+          <div class="profile-meta">
+            <span id="prof-folder-count">0 folders</span>
+            <span class="dot">·</span>
+            <span id="prof-whisper-count">0 whispers</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-action">
+        <span class="text-action" onclick="showPg('pg-create-folder')">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg>
+          new folder
+        </span>
+      </div>
+
+      <div id="folder-grid" class="folder-grid">
+        <div class="empty">no folders yet — create one to start</div>
+      </div>
+    </div>
+    <footer>whisper — voice notes by sena</footer>
+  </div>
+
+  <div class="pg" id="pg-create-folder">
+    <div class="section-pad">
+      <span class="back-row" onclick="showPg('pg-profile')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+        profile
+      </span>
+
+      <div class="page-title">New folder</div>
+      <div class="page-subtitle">group your whispers</div>
+
+      <div class="fld">
+        <label>name *</label>
+        <input type="text" id="fn" placeholder="for my sister, summer 2026…" oninput="ckFolder()"/>
+      </div>
+      <div class="fld">
+        <label>visibility</label>
+        <div class="radio-group">
+          <label class="radio-opt"><input type="radio" name="fvis" value="private" checked id="fvis-private"/> private</label>
+          <label class="radio-opt"><input type="radio" name="fvis" value="unlisted" id="fvis-unlisted"/> unlisted</label>
+        </div>
+      </div>
+      <div class="fld">
+        <label>description (optional)</label>
+        <input type="text" id="fdesc" placeholder="a few words…"/>
+      </div>
+
+      <span class="submit-lnk" id="folder-submit" onclick="createFolder()">Create folder →</span>
+    </div>
+  </div>
+
+  <div class="pg" id="pg-folder">
+    <div class="section-pad">
+      <span class="back-row" onclick="showPg('pg-profile')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+        profile
+      </span>
+
+      <div class="folder-header">
+        <div class="folder-header-row">
+          <div class="folder-title" id="fd-title">—</div>
+          <div class="folder-header-acts">
+            <span class="icon-btn" onclick="openFolderOptions()">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="7.5" cy="3" r="1"/><circle cx="7.5" cy="7.5" r="1"/><circle cx="7.5" cy="12" r="1"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="folder-submeta" id="fd-meta">—</div>
+        <div style="font-size:12px;color:#bbb;font-style:italic;margin-top:6px;display:none" id="fd-desc"></div>
+      </div>
+
+      <div class="row-action">
+        <span class="text-action" onclick="showCreateWhisper()">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg>
+          add whisper
+        </span>
+      </div>
+
+      <div id="whisper-list"></div>
+      <div class="list-foot">turn the handle to listen</div>
+    </div>
+    <footer>whisper — voice notes by sena</footer>
+  </div>
+
+  <div class="pg" id="pg-create-whisper">
+    <div class="section-pad">
+      <span class="back-row" id="create-whisper-back" onclick="backToFolder()">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+        <span id="create-whisper-back-label">folder</span>
+      </span>
+
+      <div class="page-title">New whisper</div>
+      <div class="page-subtitle" id="cw-folder-label">—</div>
+
+      <div class="fld">
+        <label>title *</label>
+        <input type="text" id="wt" placeholder="for you, on this day…" oninput="ckWhisper()"/>
+      </div>
+
+      <div id="waz" class="az" onclick="document.getElementById('wfi').click()">
+        <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="#ccc" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><polyline points="2.5,10.5 8.5,4.5 14.5,10.5"/><line x1="8.5" y1="4.5" x2="8.5" y2="15"/><line x1="4" y1="15" x2="13" y2="15"/></svg>
+        <div class="az-lbl">tap to choose an audio file</div>
+        <div class="az-hint">MP3 · WAV · M4A · OGG · max 4MB</div>
+      </div>
+      <input type="file" id="wfi" accept="audio/*" style="display:none" onchange="handleFile(this)"/>
+      <div class="mwv" id="wmwv"></div>
+
+      <div class="or-sep">or</div>
+
+      <span class="rec-lnk" id="wrb" onclick="toggleRecord()">
+        <span class="rdot" id="wrd"></span>
+        <span id="wrl">record your voice</span>
+      </span>
+      <div class="err-msg" id="rec-err">mic access blocked — check browser settings</div>
+
+      <div style="margin-top:24px">
+        <div class="fld">
+          <label>for whom (optional)</label>
+          <input type="text" id="wfw" placeholder="someone, no one, you"/>
+        </div>
+        <div class="fld">
+          <label>short message (optional)</label>
+          <textarea id="wmsg" placeholder="something to read before listening…" rows="3" maxlength="200" oninput="document.getElementById('wcc').textContent=this.value.length"></textarea>
+          <div class="cc"><span id="wcc">0</span>/200</div>
+        </div>
+      </div>
+
+      <span class="submit-lnk" id="whisper-submit" onclick="saveWhisper()">Save whisper →</span>
+    </div>
+  </div>
+
+  <div class="pg" id="pg-share">
+    <div class="share-pg">
+      <div style="font-size:22px;margin-bottom:22px">✉</div>
+      <div class="sh-head">Whisper saved.</div>
+      <p class="sh-sub">Share this link — they turn the handle to hear you</p>
+      <div class="sh-link" id="sh-link-display">—</div>
+      <div class="sh-row">
+        <span class="sh-btn" onclick="copyLink()">Copy link</span>
+        <span class="sh-btn" onclick="shareNative()">Share ↗</span>
+      </div>
+      <span class="sh-prev" onclick="backToFolderFromShare()">Back to folder →</span>
+      <p class="sh-tag">tag @sena.slowblog when you post ♡</p>
+    </div>
+    <footer>whisper — voice notes by sena</footer>
+  </div>
+
+  <div class="pg" id="pg-listen">
+    <div class="section-pad" id="listen-content">
+      <!-- filled by JS -->
+    </div>
+    <footer>whisper — voice notes by sena</footer>
+  </div>
+
+</div>
+
+<div class="mover" id="modal-player" onclick="if(event.target===this)closeModal()">
+  <div class="msheet">
+    <div class="mdrag"></div>
+    <div class="mhdr">
+      <div class="mtitle" id="mp-title">—</div>
+      <span class="mclose" onclick="closeModal()">✕</span>
+    </div>
+    <div class="mtime" id="mp-time">0:00 / 0:00</div>
+    <div class="mwf-bar" id="mp-wf"></div>
+    <div class="mbx" id="mp-box"></div>
+    <div class="harea">
+      <canvas id="mp-handle" width="80" height="80" class="hcv-el"></canvas>
+      <div class="hhint" id="mp-hint">turn clockwise to listen</div>
+    </div>
+    <div class="mnote-wrap" id="mp-note" style="display:none">
+      <p id="mp-note-text"></p>
+    </div>
+  </div>
+</div>
+
+<div class="bsheet-over" id="folder-opts" onclick="if(event.target===this)closeFolderOptions()">
+  <div class="bsheet">
+    <div class="bsheet-drag"></div>
+    <div class="bsheet-item" onclick="renameFolderPrompt()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M9 2l3 3-7 7H2v-3L9 2z"/></svg>
+      Rename folder
+    </div>
+    <div class="bsheet-item" onclick="toggleFolderVisibility()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="7" cy="7" r="2.5"/><path d="M1 7 Q4 2 7 2 Q10 2 13 7 Q10 12 7 12 Q4 12 1 7z"/></svg>
+      <span id="vis-toggle-label">Toggle visibility</span>
+    </div>
+    <div class="bsheet-item danger" onclick="deleteFolderConfirm()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,3 12.5,3"/><path d="M5 3V1.5h4V3"/><path d="M2.5 3l.7 8.5a.85.85 0 0 0 .85.75h5.9a.85.85 0 0 0 .85-.75L11.5 3"/><line x1="5.5" y1="6" x2="5.5" y2="9.5"/><line x1="8.5" y1="6" x2="8.5" y2="9.5"/></svg>
+      Delete folder
+    </div>
+  </div>
+</div>
+
+<div class="bsheet-over" id="whisper-opts" onclick="if(event.target===this)closeWhisperOptions()">
+  <div class="bsheet">
+    <div class="bsheet-drag"></div>
+    <div class="bsheet-item" onclick="copyWhisperLink()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><rect x="4" y="4" width="9" height="9" rx="1"/><path d="M4 4V2.5A1.5 1.5 0 0 0 2.5 1H1.5A1.5 1.5 0 0 0 0 2.5v8A1.5 1.5 0 0 0 1.5 12H3"/></svg>
+      Copy link
+    </div>
+    <div class="bsheet-item danger" onclick="deleteWhisperConfirm()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5,3 12.5,3"/><path d="M5 3V1.5h4V3"/><path d="M2.5 3l.7 8.5a.85.85 0 0 0 .85.75h5.9a.85.85 0 0 0 .85-.75L11.5 3"/><line x1="5.5" y1="6" x2="5.5" y2="9.5"/><line x1="8.5" y1="6" x2="8.5" y2="9.5"/></svg>
+      Delete whisper
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<audio id="aud"></audio>
 
 <script>
-// ================================
-// UTILS — defined first so always available
-// ================================
-function fmt(s) {
-  if (!s || isNaN(s) || s < 0) return '0:00';
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return m + ':' + String(sec).padStart(2, '0');
-}
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
+let db = JSON.parse(localStorage.getItem('whisper_db') || '{"folders":[],"whispers":[]}');
+let activeFolderId = null;
+let activeWhisperId = null;
+let newAudioBlob = null;
+let newAudioDuration = 0;
+let mediaRecorder = null;
+let recChunks = [];
+let recTimer = null;
+let recSeconds = 0;
+let isRecording = false;
+// modal handle state
+let mDrag=false, mLa=null, mHa=0, mAp=0, mPt=null, mAudio=null;
+const DPS = 260;
 
-// ================================
-// STATE
-// ================================
-const S = {
-  tracks: [],
-  cur: -1,
-  playing: false,
-  pendingAudio: null,
-  isRecording: false,
-  mediaRecorder: null,
-  recChunks: [],
-  recSecs: 0,
-  recTimer: null,
-};
-
-const aud = document.getElementById('aud');
-
-// ================================
-// DEMO DATA
-// ================================
-const DEMO = [
-  { title: 'for you, on this morning', msg: 'I wanted to say this out loud.', dur: 14, url: null },
-  { title: "things I should've said sooner", msg: '', dur: 9, url: null },
-  { title: 'goodnight, always', msg: 'close your eyes.', dur: 6, url: null },
-];
-
-// Demo overrides (set via settings panel)
-const demoOverrides = [
-  { title: null, msg: null, url: null, dur: null },
-  { title: null, msg: null, url: null, dur: null },
-  { title: null, msg: null, url: null, dur: null },
-];
-
-function toggleDemoSettings() {
-  const el = document.getElementById('demoSettings');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
-function handleDemoFile(idx, file) {
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  const tmp = new Audio(url);
-  tmp.onloadedmetadata = () => {
-    demoOverrides[idx].url = url;
-    demoOverrides[idx].dur = tmp.duration;
-    const label = document.getElementById('dAudioLabel' + idx);
-    label.textContent = '✓ ' + file.name;
-    document.getElementById('dAudio' + idx).classList.add('loaded');
-  };
-}
-
-function saveDemoSettings() {
-  for (let i = 0; i < 3; i++) {
-    const t = document.getElementById('dTitle' + i).value.trim();
-    const m = document.getElementById('dMsg' + i).value.trim();
-    if (t) demoOverrides[i].title = t;
-    if (m !== undefined) demoOverrides[i].msg = m;
-  }
-  toggleDemoSettings();
-  startDemo();
-}
-
-function startDemo() {
-  S.tracks = DEMO.map((t, i) => ({
-    title: demoOverrides[i].title || t.title,
-    msg:   demoOverrides[i].msg   !== null ? demoOverrides[i].msg : t.msg,
-    dur:   demoOverrides[i].dur   || t.dur,
-    url:   demoOverrides[i].url   || t.url,
-  }));
-  renderTracklist();
-  showPage('pg-player');
-}
-
-// ================================
-// PAGE NAV
-// ================================
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// ================================
-// FILE / RECORD
-// ================================
-function handleFile(file) {
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  const tmp = new Audio(url);
-  tmp.onloadedmetadata = () => {
-    S.pendingAudio = { url, dur: tmp.duration, blob: file };
-    document.getElementById('azIcon').textContent = '✓';
-    document.getElementById('azText').textContent = file.name;
-    document.getElementById('azMeta').textContent = fmt(tmp.duration);
-    document.getElementById('azMeta').classList.remove('hidden');
-    document.getElementById('audioZone').classList.add('has-audio');
-    buildMiniWave();
-    checkReady();
-  };
-}
-
-function buildMiniWave() {
-  const c = document.getElementById('miniWave');
-  c.innerHTML = '';
-  c.classList.add('show');
-  for (let i = 0; i < 36; i++) {
-    const b = document.createElement('div');
-    b.className = 'mw-bar';
-    b.style.height = (Math.random() * 70 + 15) + '%';
-    b.style.background = '#e8e8e8';
-    c.appendChild(b);
+function saveDb(){
+  try {
+    localStorage.setItem('whisper_db', JSON.stringify(db));
+  } catch(e) {
+    showToast('storage full — delete old whispers to free space');
   }
 }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function fmt(s){ if(!s||isNaN(s))return'0:00'; const m=Math.floor(s/60),x=Math.floor(s%60); return m+':'+(x<10?'0':'')+x; }
+function fmtDate(ts){ return new Date(ts).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg,dur=2200){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
 
-async function toggleRec() {
-  if (!S.isRecording) {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      S.mediaRecorder = new MediaRecorder(stream);
-      S.recChunks = [];
-      S.recSecs = 0;
-      S.mediaRecorder.ondataavailable = e => S.recChunks.push(e.data);
-      S.mediaRecorder.onstop = () => {
-        const blob = new Blob(S.recChunks, { type: 'audio/webm' });
-        const url = URL.createObjectURL(blob);
-        S.pendingAudio = { url, dur: S.recSecs, blob };
-        document.getElementById('azIcon').textContent = '✓';
-        document.getElementById('azText').textContent = 'Recording — ' + fmt(S.recSecs);
-        document.getElementById('azMeta').textContent = fmt(S.recSecs);
-        document.getElementById('azMeta').classList.remove('hidden');
-        document.getElementById('audioZone').classList.add('has-audio');
-        buildMiniWave();
-        checkReady();
-        stream.getTracks().forEach(t => t.stop());
+function showPg(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='pg-profile') renderProfile();
+}
+
+function goHome(){ showPg('pg-landing'); }
+
+function checkRoute(){
+  const hash = window.location.hash;
+  if(hash.startsWith('#/m/')){ openListenPage(hash.slice(4)); }
+}
+window.addEventListener('hashchange', checkRoute);
+
+function startTutorial(){
+  showPg('pg-tutorial');
+  const steps = document.querySelectorAll('.tut-step');
+  steps.forEach(s=>{ s.classList.remove('show'); });
+  steps.forEach((s,i)=>{ setTimeout(()=>s.classList.add('show'), 120 + i*160); });
+}
+
+function renderProfile(){
+  const totalW = db.whispers.length;
+  document.getElementById('prof-folder-count').textContent = db.folders.length + ' folder' + (db.folders.length!==1?'s':'');
+  document.getElementById('prof-whisper-count').textContent = totalW + ' whisper' + (totalW!==1?'s':'');
+  const grid = document.getElementById('folder-grid');
+  if(db.folders.length===0){ grid.innerHTML='<div class="empty">no folders yet — create one to start</div>'; return; }
+  grid.innerHTML = db.folders.slice().reverse().map(f=>{
+    const count = db.whispers.filter(w=>w.folderId===f.id).length;
+    return `<div class="folder-row" onclick="openFolder('${f.id}')">
+      <div class="folder-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c8c8c8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 5a1 1 0 0 1 1-1h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+        </svg>
+      </div>
+      <div class="folder-info">
+        <div class="folder-name">${esc(f.name)}</div>
+        <div class="folder-meta">
+          ${count} whisper${count!==1?'s':''}
+          <span style="color:#e0e0e0">·</span>
+          ${fmtDate(f.createdAt)}
+        </div>
+      </div>
+      <span class="badge${f.visibility==='unlisted'?' pub':''}">
+        ${f.visibility==='unlisted'?'unlisted':'private'}
+      </span>
+    </div>`;
+  }).join('');
+}
+
+function ckFolder(){
+  const v = document.getElementById('fn').value.trim();
+  document.getElementById('folder-submit').classList.toggle('go', v.length>0);
+}
+
+function createFolder(){
+  const name = document.getElementById('fn').value.trim();
+  if(!name) return;
+  const vis = document.querySelector('input[name="fvis"]:checked').value;
+  const desc = document.getElementById('fdesc').value.trim();
+  const folder = { id:uid(), name, visibility:vis, description:desc, createdAt:Date.now() };
+  db.folders.push(folder);
+  saveDb();
+  // reset form
+  document.getElementById('fn').value='';
+  document.getElementById('fdesc').value='';
+  document.querySelector('input[name="fvis"][value="private"]').checked=true;
+  document.getElementById('folder-submit').classList.remove('go');
+  showToast('folder created');
+  openFolder(folder.id);
+}
+
+function openFolder(fid){
+  activeFolderId = fid;
+  const f = db.folders.find(x=>x.id===fid);
+  if(!f) return;
+  document.getElementById('fd-title').textContent = f.name;
+  const whispers = db.whispers.filter(w=>w.folderId===fid);
+  const metaEl = document.getElementById('fd-meta');
+  metaEl.innerHTML = `
+    <span style="display:flex;align-items:center;gap:4px">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round">
+        <path d="M1.5 5.5 Q1.5 2 5.5 2 Q9.5 2 9.5 5.5"/>
+        <rect x="1" y="5.5" width="9" height="4.5" rx="1"/>
+      </svg>
+      ${f.visibility}
+    </span>
+    <span style="color:#ddd">·</span>
+    <span>${whispers.length} whisper${whispers.length!==1?'s':''}</span>
+    <span style="color:#ddd">·</span>
+    <span>${fmtDate(f.createdAt)}</span>`;
+  const descEl = document.getElementById('fd-desc');
+  if(f.description){ descEl.textContent=f.description; descEl.style.display='block'; }
+  else{ descEl.style.display='none'; }
+  renderFolderWhispers(fid);
+  showPg('pg-folder');
+}
+
+function renderFolderWhispers(fid){
+  const list = document.getElementById('whisper-list');
+  const whispers = db.whispers.filter(w=>w.folderId===fid);
+  if(whispers.length===0){ list.innerHTML='<div class="empty">no whispers yet</div>'; return; }
+  list.innerHTML = whispers.slice().reverse().map(w=>`
+    <div class="track-row">
+      <div class="tr-icon" onclick="openModal('${w.id}')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#c8c8c8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="4.5" cy="11" r="1.8"/><circle cx="11" cy="9.5" r="1.8"/>
+          <polyline points="6.3,11 6.3,3.5 12.8,2 12.8,9.5"/>
+        </svg>
+      </div>
+      <div class="tr-body" onclick="openModal('${w.id}')">
+        <div class="tr-title">${esc(w.title)}</div>
+        <div class="tr-meta">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+            <circle cx="5" cy="5" r="4"/><polyline points="5,2.5 5,5 7,6.5"/>
+          </svg>
+          ${fmt(w.duration)} · ${fmtDate(w.createdAt)}
+        </div>
+      </div>
+      <span class="icon-btn" onclick="openWhisperOptions('${w.id}')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <circle cx="7" cy="2.5" r=".8"/><circle cx="7" cy="7" r=".8"/><circle cx="7" cy="11.5" r=".8"/>
+        </svg>
+      </span>
+    </div>`).join('');
+}
+
+function openFolderOptions(){
+  const f = db.folders.find(x=>x.id===activeFolderId);
+  if(!f) return;
+  document.getElementById('vis-toggle-label').textContent =
+    f.visibility==='private' ? 'Make unlisted' : 'Make private';
+  document.getElementById('folder-opts').classList.add('open');
+}
+function closeFolderOptions(){ document.getElementById('folder-opts').classList.remove('open'); }
+
+function renameFolderPrompt(){
+  closeFolderOptions();
+  const f = db.folders.find(x=>x.id===activeFolderId); if(!f) return;
+  const name = prompt('Rename folder:', f.name);
+  if(name && name.trim()){ f.name=name.trim(); saveDb(); openFolder(activeFolderId); showToast('renamed'); }
+}
+
+function toggleFolderVisibility(){
+  closeFolderOptions();
+  const f = db.folders.find(x=>x.id===activeFolderId); if(!f) return;
+  f.visibility = f.visibility==='private'?'unlisted':'private';
+  saveDb(); openFolder(activeFolderId);
+  showToast('visibility updated');
+}
+
+function deleteFolderConfirm(){
+  closeFolderOptions();
+  if(!confirm('Delete this folder and everything inside?')) return;
+  db.whispers = db.whispers.filter(w=>w.folderId!==activeFolderId);
+  db.folders = db.folders.filter(f=>f.id!==activeFolderId);
+  saveDb(); activeFolderId=null; renderProfile(); showPg('pg-profile');
+  showToast('folder deleted');
+}
+
+function showCreateWhisper(){
+  const f = db.folders.find(x=>x.id===activeFolderId); if(!f) return;
+  document.getElementById('cw-folder-label').textContent = 'in ' + f.name;
+  document.getElementById('create-whisper-back-label').textContent = f.name;
+  newAudioBlob=null; newAudioDuration=0;
+  document.getElementById('wt').value='';
+  document.getElementById('wfw').value='';
+  document.getElementById('wmsg').value='';
+  document.getElementById('wcc').textContent='0';
+  document.getElementById('wmwv').classList.remove('show');
+  document.getElementById('wmwv').innerHTML='';
+  document.getElementById('whisper-submit').classList.remove('go');
+  document.getElementById('rec-err').classList.remove('show');
+  const az=document.getElementById('waz');
+  az.classList.remove('filled');
+  az.innerHTML=`<svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="#ccc" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><polyline points="2.5,10.5 8.5,4.5 14.5,10.5"/><line x1="8.5" y1="4.5" x2="8.5" y2="15"/><line x1="4" y1="15" x2="13" y2="15"/></svg><div class="az-lbl">tap to choose an audio file</div><div class="az-hint">MP3 · WAV · M4A · OGG · max 4MB</div>`;
+  az.onclick=()=>document.getElementById('wfi').click();
+  showPg('pg-create-whisper');
+}
+
+function backToFolder(){
+  if(activeFolderId){ openFolder(activeFolderId); }
+  else{ showPg('pg-profile'); }
+}
+
+function ckWhisper(){
+  const v = document.getElementById('wt').value.trim();
+  document.getElementById('whisper-submit').classList.toggle('go', v.length>0 && newAudioBlob!==null);
+}
+
+function handleFile(input){
+  if(!input.files.length) return;
+  const file = input.files[0];
+  if(file.size > 25*1024*1024){ showToast('file's too big — max 25MB'); return; }
+  newAudioBlob = file;
+  getAudioDuration(file).then(d=>{ newAudioDuration=d; });
+  setAzFilled(file.name);
+  buildMiniWave('wmwv');
+  ckWhisper();
+}
+
+function getAudioDuration(blob){
+  return new Promise(res=>{
+    const url=URL.createObjectURL(blob);
+    const a=new Audio();
+    a.onloadedmetadata=()=>{ res(a.duration||0); URL.revokeObjectURL(url); };
+    a.onerror=()=>res(0);
+    a.src=url;
+  });
+}
+
+function setAzFilled(name){
+  const az=document.getElementById('waz');
+  az.classList.add('filled');
+  az.innerHTML=`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#DD4444" stroke-width="1.2" stroke-linecap="round" style="display:block;margin:0 auto"><polyline points="2,10 7.5,4.5 13,10"/><line x1="7.5" y1="4.5" x2="7.5" y2="14"/><line x1="3.5" y1="14" x2="11.5" y2="14"/></svg><div class="az-lbl">${esc(name)}</div><div class="az-hint">loaded · tap to change</div>`;
+  az.onclick=()=>document.getElementById('wfi').click();
+}
+
+async function toggleRecord(){
+  const rb=document.getElementById('wrb'), rd=document.getElementById('wrd'), rl=document.getElementById('wrl');
+  const err=document.getElementById('rec-err');
+  if(!isRecording){
+    if(!navigator.mediaDevices?.getUserMedia){ err.textContent='recording not supported here'; err.classList.add('show'); return; }
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      err.classList.remove('show');
+      const mime = ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus','audio/ogg'].find(m=>MediaRecorder.isTypeSupported(m))||'';
+      recChunks=[];
+      mediaRecorder = new MediaRecorder(stream, mime?{mimeType:mime}:{});
+      mediaRecorder.ondataavailable = e=>{ if(e.data.size>0) recChunks.push(e.data); };
+      mediaRecorder.onstop = ()=>{
+        const blob = new Blob(recChunks, {type: mediaRecorder.mimeType||'audio/webm'});
+        newAudioBlob=blob; newAudioDuration=recSeconds;
+        const ext = blob.type.includes('mp4')||blob.type.includes('m4a')?'m4a':'webm';
+        setAzFilled('recording.'+ext);
+        buildMiniWave('wmwv'); ckWhisper();
+        stream.getTracks().forEach(t=>t.stop());
       };
-      S.mediaRecorder.start();
-      S.isRecording = true;
-      document.getElementById('recBtn').classList.add('recording');
-      S.recTimer = setInterval(() => {
-        S.recSecs++;
-        document.getElementById('recBtnLabel').textContent = 'recording… ' + fmt(S.recSecs);
-      }, 1000);
-    } catch(e) { toast('Microphone access denied'); }
+      mediaRecorder.start(100);
+      isRecording=true; recSeconds=0;
+      rb.classList.add('rr'); rd.classList.add('p');
+      rl.textContent='recording… 0:00';
+      recTimer=setInterval(()=>{
+        recSeconds++;
+        rl.textContent='recording… '+fmt(recSeconds);
+        if(recSeconds >= 120) toggleRecord();
+      },1000);
+    } catch(e){
+      err.textContent='mic access blocked — check browser settings';
+      err.classList.add('show');
+    }
   } else {
-    S.mediaRecorder.stop();
-    S.isRecording = false;
-    clearInterval(S.recTimer);
-    document.getElementById('recBtn').classList.remove('recording');
-    document.getElementById('recBtnLabel').textContent = 'record your voice';
+    clearInterval(recTimer); isRecording=false;
+    rb.classList.remove('rr'); rd.classList.remove('p');
+    rl.textContent='record your voice';
+    if(mediaRecorder && mediaRecorder.state!=='inactive') mediaRecorder.stop();
   }
 }
 
-function checkReady() {
-  const hasTitle = document.getElementById('noteTitle').value.trim().length > 0;
-  const hasAudio = !!S.pendingAudio;
-  document.getElementById('wrapBtn').disabled = !(hasTitle && hasAudio);
+function buildMiniWave(id){
+  const w=document.getElementById(id); w.innerHTML='';
+  for(let i=0;i<28;i++){
+    const h=2+Math.floor(Math.random()*16);
+    const s=document.createElement('span'); s.style.height=h+'px'; w.appendChild(s);
+  }
+  w.classList.add('show');
+  w.querySelectorAll('span').forEach((s,i)=>setTimeout(()=>{ s.style.background='#111'; },i*16));
 }
 
-function doWrap() {
-  if (!S.pendingAudio) return;
-  const track = {
-    title: document.getElementById('noteTitle').value.trim(),
-    msg: document.getElementById('noteMsg').value.trim(),
-    dur: S.pendingAudio.dur,
-    url: S.pendingAudio.url,
+function saveWhisper(){
+  const title=document.getElementById('wt').value.trim();
+  if(!title||!newAudioBlob) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const whisper={
+      id:uid(), folderId:activeFolderId, title,
+      forWhom:document.getElementById('wfw').value.trim(),
+      message:document.getElementById('wmsg').value.trim(),
+      audioData:reader.result,
+      audioType:newAudioBlob.type,
+      duration:newAudioDuration,
+      createdAt:Date.now()
+    };
+    db.whispers.push(whisper);
+    saveDb();
+    // Share link
+    const url = window.location.origin + window.location.pathname + '#/m/' + whisper.id;
+    document.getElementById('sh-link-display').textContent = url;
+    showPg('pg-share');
+    newAudioBlob=null; newAudioDuration=0;
   };
-  S.tracks = [track];
-  const id = Math.random().toString(36).slice(2, 10);
-  document.getElementById('shareUrl').textContent = 'https://whisper.sena/m/' + id;
-
-  // Show share page
-  showPage('pg-share');
-
-  // Reset form
-  document.getElementById('noteTitle').value = '';
-  document.getElementById('noteMsg').value = '';
-  document.getElementById('azIcon').textContent = '♪';
-  document.getElementById('azText').textContent = 'tap to choose an audio file';
-  document.getElementById('azMeta').classList.add('hidden');
-  document.getElementById('audioZone').classList.remove('has-audio');
-  document.getElementById('miniWave').classList.remove('show');
-  document.getElementById('wrapBtn').disabled = true;
-  document.getElementById('fileIn').value = '';
-  S.pendingAudio = null;
+  reader.readAsDataURL(newAudioBlob);
 }
 
-// ================================
-// SHARE
-// ================================
-function copyUrl() {
-  const t = document.getElementById('shareUrl').textContent;
-  navigator.clipboard.writeText(t).then(() => toast('Copied!'));
-}
-function shareIt() {
-  const t = document.getElementById('shareUrl').textContent;
-  if (navigator.share) navigator.share({ title: 'A voice note for you', url: t });
-  else copyUrl();
+function backToFolderFromShare(){
+  if(activeFolderId){ openFolder(activeFolderId); }
+  else{ showPg('pg-profile'); }
 }
 
-function previewNote() {
-  renderTracklist();
-  showPage('pg-player');
+function copyLink(){
+  const link=document.getElementById('sh-link-display').textContent;
+  if(navigator.clipboard){ navigator.clipboard.writeText(link).then(()=>showToast('copied')); }
+  else{ const ta=document.createElement('textarea'); ta.value=link; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('copied'); }
 }
 
-// ================================
-// TRACKLIST
-// ================================
-function renderTracklist() {
-  const c = document.getElementById('trackList');
-  c.innerHTML = '';
-  S.tracks.forEach((tr, i) => {
-    const el = document.createElement('div');
-    el.className = 'track-entry';
-    el.innerHTML = `
-      <span class="track-n">${i+1}</span>
-      <span class="track-t">${tr.title}</span>
-      <span class="track-dur">${fmt(tr.dur)}</span>
-    `;
-    el.onclick = () => openModal(i);
-    c.appendChild(el);
-  });
+function shareNative(){
+  const link=document.getElementById('sh-link-display').textContent;
+  if(navigator.share){ navigator.share({title:'a whisper for you',url:link}); }
+  else{ copyLink(); }
 }
 
-// ================================
-// MODAL
-// ================================
-let modalWaveBars = [];
-let simInterval = null;
-let simElapsed = 0;
+function openWhisperOptions(wid){
+  activeWhisperId=wid;
+  document.getElementById('whisper-opts').classList.add('open');
+}
+function closeWhisperOptions(){ document.getElementById('whisper-opts').classList.remove('open'); }
 
-function openModal(i) {
-  S.cur = i;
-  const tr = S.tracks[i];
+function copyWhisperLink(){
+  closeWhisperOptions();
+  const link = window.location.origin + window.location.pathname + '#/m/' + activeWhisperId;
+  if(navigator.clipboard){ navigator.clipboard.writeText(link).then(()=>showToast('copied')); }
+  else{ showToast('Link: '+link); }
+}
 
-  document.getElementById('modalTitle').textContent = tr.title;
-  document.getElementById('modalSub').textContent = fmt(0) + ' / ' + fmt(tr.dur);
-  document.getElementById('modalTime').textContent = fmt(0) + ' / ' + fmt(tr.dur);
-
-  if (tr.msg) {
-    document.getElementById('modalMsg').textContent = tr.msg;
-    document.getElementById('modalMsg').classList.remove('hidden');
-  } else {
-    document.getElementById('modalMsg').classList.add('hidden');
+function deleteWhisperConfirm(){
+  closeWhisperOptions();
+  if(!confirm('Delete this whisper?')) return;
+  const wasOpen = document.getElementById('modal-player').classList.contains('open');
+  if(wasOpen) closeModal();
+  db.whispers = db.whispers.filter(w=>w.id!==activeWhisperId);
+  saveDb();
+  if(activeFolderId){
+    renderFolderWhispers(activeFolderId);
+    openFolder(activeFolderId);
   }
+  showToast('deleted');
+}
 
-  // Build waveform
-  const mw = document.getElementById('modalWave');
-  mw.innerHTML = '';
-  modalWaveBars = [];
-  const BAR_COUNT = 44;
-  const heights = [];
-  for (let j = 0; j < BAR_COUNT; j++) heights.push(Math.random() * 70 + 15);
-  for (let j = 0; j < BAR_COUNT; j++) {
-    const b = document.createElement('div');
-    b.className = 'modal-wave-bar unplayed';
-    b.style.height = heights[j] + '%';
-    mw.appendChild(b);
-    modalWaveBars.push(b);
+function openModal(wid){
+  const w=db.whispers.find(x=>x.id===wid); if(!w) return;
+  activeWhisperId=wid;
+  if(mAudio){ mAudio.pause(); mAudio=null; }
+  mHa=0; mAp=0;
+  document.getElementById('mp-title').textContent=w.title;
+  document.getElementById('mp-time').textContent='0:00 / '+fmt(w.duration);
+  document.getElementById('mp-hint').textContent='turn clockwise to listen';
+  document.getElementById('mp-hint').className='hhint';
+  const note=document.getElementById('mp-note');
+  document.getElementById('mp-note-text').textContent=w.message;
+  note.style.display=w.message?'block':'none';
+  document.getElementById('mp-box').innerHTML=musicBoxSVG('mp');
+  buildWaveform('mp-wf');
+  drawHandle(document.getElementById('mp-handle'),0);
+  mAudio=new Audio(w.audioData);
+  mAudio.addEventListener('timeupdate',()=>{ mAp=mAudio.currentTime; updateWaveform('mp-wf',mAp,w.duration||60); document.getElementById('mp-time').textContent=fmt(mAp)+' / '+fmt(w.duration); });
+  document.getElementById('modal-player').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal-player').classList.remove('open');
+  document.body.style.overflow='';
+  clearTimeout(mPt);
+  if(mAudio){ mAudio.pause(); mAudio=null; }
+}
+
+// handle drag for modal
+const mpHandle = document.getElementById('mp-handle');
+function gaM(e){ const r=mpHandle.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2; const p=e.touches?e.touches[0]:e; return Math.atan2(p.clientY-cy,p.clientX-cx)*180/Math.PI; }
+
+function onMMove(e){
+  if(!mDrag)return; e.preventDefault();
+  const a=gaM(e); let d=a-mLa; if(d>180)d-=360; if(d<-180)d+=360;
+  mLa=a; mHa+=d; drawHandle(mpHandle,mHa);
+  if(d>1){
+    const w=db.whispers.find(x=>x.id===activeWhisperId);
+    const dur=w?(w.duration||60):60;
+    mAp=Math.min(dur,mAp+d/DPS);
+    if(mAudio){ if(Math.abs(mAudio.currentTime-mAp)>0.5)mAudio.currentTime=mAp; if(mAudio.paused)mAudio.play().catch(()=>{}); }
+    flashTines('mp'); updateWaveform('mp-wf',mAp,dur);
+    const hh=document.getElementById('mp-hint');
+    if(mAp>=dur){ hh.textContent='— finished —'; hh.className='hhint dn'; if(mAudio)mAudio.pause(); }
+    else{ hh.textContent='keep turning…'; hh.className='hhint act'; clearTimeout(mPt); mPt=setTimeout(()=>{ if(mAudio)mAudio.pause(); const h=document.getElementById('mp-hint'); if(h&&mAp<dur){h.textContent='turn clockwise to listen';h.className='hhint';} },500); }
+  } else if(d<-2){ if(mAudio)mAudio.pause(); const h=document.getElementById('mp-hint'); if(h){h.textContent='← turn clockwise';h.className='hhint';} }
+}
+
+mpHandle.addEventListener('mousedown',e=>{e.preventDefault();mDrag=true;mLa=gaM(e);});
+document.addEventListener('mousemove',onMMove);
+document.addEventListener('mouseup',()=>{ mDrag=false; mLa=null; if(mAudio)mAudio.pause(); });
+mpHandle.addEventListener('touchstart',e=>{e.preventDefault();mDrag=true;mLa=gaM(e);},{passive:false});
+document.addEventListener('touchmove',onMMove,{passive:false});
+document.addEventListener('touchend',()=>{ mDrag=false; mLa=null; if(mAudio)mAudio.pause(); });
+
+function openListenPage(wid){
+  const w=db.whispers.find(x=>x.id===wid);
+  const content=document.getElementById('listen-content');
+  if(!w){
+    content.innerHTML='<div style="padding:52px 0;text-align:center;font-size:14px;color:#aaa;font-style:italic">This whisper doesn\'t exist or may have been deleted.</div>';
+    showPg('pg-listen'); return;
   }
+  const folder=db.folders.find(f=>f.id===w.folderId);
+  content.innerHTML=`
+    <span class="back-row" onclick="${activeFolderId ? `openFolder('${w.folderId}')` : `showPg('pg-profile')`}">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+      ${activeFolderId ? esc(folder ? folder.name : 'back') : 'profile'}
+    </span>
+    <div style="font-style:italic;font-size:22px;line-height:1.4;margin-bottom:6px">${esc(w.title)}</div>
+    ${w.forWhom?`<div style="font-size:13px;color:#aaa;margin-bottom:4px">for ${esc(w.forWhom)}</div>`:''}
+    <div style="font-size:12px;color:#ccc;margin-bottom:24px">${fmtDate(w.createdAt)}${folder?' · '+esc(folder.name):''}</div>
+    <div id="l-wf" style="display:flex;align-items:flex-end;gap:2px;height:28px;margin-bottom:16px"></div>
+    <div id="l-time" style="font-size:12px;color:#bbb;margin-bottom:22px;font-style:italic">0:00 / ${fmt(w.duration)}</div>
+    <div style="display:flex;justify-content:center;margin-bottom:20px">${musicBoxSVG('lp')}</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:14px;user-select:none">
+      <canvas id="l-handle" width="80" height="80" style="touch-action:none;cursor:grab"></canvas>
+      <div class="hhint" id="l-hint">turn clockwise to listen</div>
+    </div>
+    ${w.message?`<div style="border-top:1px solid #ebebeb;padding-top:14px;margin-top:4px"><p style="font-size:13px;font-style:italic;color:#999;line-height:1.85">${esc(w.message)}</p></div>`:''}
+    <audio id="l-audio" src="${w.audioData}" preload="auto" style="display:none"></audio>
+  `;
+  showPg('pg-listen');
+  buildWaveform('l-wf');
+  drawHandle(document.getElementById('l-handle'),0);
+  initListenHandle(w);
+}
 
-  // Build tape holes
-  buildTapeHoles();
-
-  // Setup audio
-  if (tr.url) {
-    aud.src = tr.url;
-    aud.load();
+function initListenHandle(w){
+  const cv=document.getElementById('l-handle'); if(!cv)return;
+  const audio=document.getElementById('l-audio'); if(!audio)return;
+  let lHa=0,lDrag=false,lLa=null,lAp=0,lPt=null;
+  function gaL(e){ const r=cv.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2; const p=e.touches?e.touches[0]:e; return Math.atan2(p.clientY-cy,p.clientX-cx)*180/Math.PI; }
+  function onL(e){
+    if(!lDrag)return; e.preventDefault();
+    const a=gaL(e); let d=a-lLa; if(d>180)d-=360; if(d<-180)d+=360;
+    lLa=a; lHa+=d; drawHandle(cv,lHa);
+    if(d>1){
+      const dur=w.duration||audio.duration||60;
+      lAp=Math.min(dur,lAp+d/DPS);
+      if(Math.abs(audio.currentTime-lAp)>0.5)audio.currentTime=lAp;
+      if(audio.paused)audio.play().catch(()=>{});
+      flashTines('lp'); updateWaveform('l-wf',lAp,dur);
+      document.getElementById('l-time').textContent=fmt(lAp)+' / '+fmt(dur);
+      const hh=document.getElementById('l-hint');
+      if(lAp>=dur){ hh.textContent='— finished —'; hh.className='hhint dn'; audio.pause(); }
+      else{ hh.textContent='keep turning…'; hh.className='hhint act'; clearTimeout(lPt); lPt=setTimeout(()=>{ audio.pause(); const h=document.getElementById('l-hint'); if(h&&lAp<dur){h.textContent='turn clockwise to listen';h.className='hhint';} },500); }
+    } else if(d<-2){ audio.pause(); const h=document.getElementById('l-hint'); if(h){h.textContent='← turn clockwise';h.className='hhint';} }
   }
-
-  // Reset handle
-  handleAngle = 0;
-  setHandleAngle(0);
-  setBoxHandleAngle(0);
-  simElapsed = 0;
-  S.playing = false;
-  document.getElementById('handleHint').textContent = 'turn clockwise to listen';
-  document.getElementById('handleHint').classList.remove('active-color');
-
-  // Clear any sim
-  clearInterval(simInterval);
-  aud.pause();
-  aud.currentTime = 0;
-
-  document.getElementById('overlay').classList.add('open');
+  cv.addEventListener('mousedown',e=>{e.preventDefault();lDrag=true;lLa=gaL(e);});
+  document.addEventListener('mousemove',onL);
+  document.addEventListener('mouseup',()=>{ lDrag=false; lLa=null; audio.pause(); });
+  cv.addEventListener('touchstart',e=>{e.preventDefault();lDrag=true;lLa=gaL(e);},{passive:false});
+  document.addEventListener('touchmove',onL,{passive:false});
+  document.addEventListener('touchend',()=>{ lDrag=false; lLa=null; audio.pause(); });
+  audio.addEventListener('timeupdate',()=>{ lAp=audio.currentTime; updateWaveform('l-wf',lAp,w.duration||audio.duration||60); document.getElementById('l-time').textContent=fmt(lAp)+' / '+fmt(w.duration); });
 }
 
-function buildTapeHoles() {
-  const g = document.getElementById('tapeHolesTop');
-  g.innerHTML = '';
-  const cols = [20, 35, 50, 65];
-  const rows = [15, 25, 38, 48, 60, 72, 85, 95];
-  cols.forEach(cx => {
-    rows.forEach(cy => {
-      if (Math.random() > 0.5) {
-        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        c.setAttribute('cx', cx);
-        c.setAttribute('cy', cy);
-        c.setAttribute('r', '3');
-        c.setAttribute('fill', '#ddd');
-        g.appendChild(c);
-      }
-    });
-  });
+function drawHandle(cv,angle){
+  if(!cv)return;
+  const ctx=cv.getContext('2d'),cx=40,cy=40,r=30;
+  ctx.clearRect(0,0,80,80);
+  ctx.strokeStyle='#ebebeb'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+  const rad=(angle-90)*Math.PI/180, ax=cx+21*Math.cos(rad), ay=cy+21*Math.sin(rad);
+  ctx.strokeStyle='#111'; ctx.lineWidth=1.6; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ax,ay); ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.strokeStyle='#111'; ctx.lineWidth=1.1;
+  ctx.beginPath(); ctx.arc(ax,ay,3.2,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(cx,cy,2,0,Math.PI*2); ctx.fill();
 }
 
-function closeModal() {
-  document.getElementById('overlay').classList.remove('open');
-  aud.pause();
-  clearInterval(simInterval);
-  S.playing = false;
+function buildWaveform(id){
+  const w=document.getElementById(id); if(!w)return; w.innerHTML='';
+  for(let i=0;i<36;i++){ const h=4+Math.floor(Math.random()*20); const s=document.createElement('span'); s.style.height=h+'px'; s.className='bu'; w.appendChild(s); }
 }
 
-function maybeCloseOverlay(e) {
-  if (e.target === document.getElementById('overlay')) closeModal();
+function updateWaveform(id,pos,dur){
+  const bars=document.querySelectorAll('#'+id+' span'); if(!bars.length)return;
+  const pi=Math.floor(pos/dur*bars.length);
+  bars.forEach((b,i)=>{ b.className=i<pi?'bp':i===pi?'bc':'bu'; });
 }
 
-// ================================
-// HANDLE DRAG — THE CORE
-// ================================
-let handleAngle = 0;
-let dragActive = false;
-let dragCx = 0, dragCy = 0;
-let lastDragAngle = 0;
-let lastTurnTime = 0;
-
-function handleDragStart(e) {
-  e.preventDefault();
-  dragActive = true;
-  const wrap = document.getElementById('handleWrap');
-  const r = wrap.getBoundingClientRect();
-  dragCx = r.left + r.width / 2;
-  dragCy = r.top + r.height / 2;
-  const pt = e.touches ? e.touches[0] : e;
-  lastDragAngle = Math.atan2(pt.clientY - dragCy, pt.clientX - dragCx) * 180 / Math.PI;
-
-  document.addEventListener('mousemove', handleDragMove);
-  document.addEventListener('mouseup', handleDragEnd);
-  document.addEventListener('touchmove', handleDragMove, { passive: false });
-  document.addEventListener('touchend', handleDragEnd);
+function musicBoxSVG(prefix){
+  let tines='';
+  for(let i=0;i<21;i++){ const x=14+i*6, y2=i%2===0?62:65; tines+=`<line x1="${x}" y1="52" x2="${x}" y2="${y2}" stroke="#c8c8c8" stroke-width="1.1" stroke-linecap="round" id="${prefix}-t${i}"/>`; }
+  const hp=[[48,10],[70,10],[102,10],[56,18],[86,18],[110,26],[64,26],[48,34],[94,34],[78,42],[56,50],[102,50]];
+  let holes=hp.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="2.5" fill="#111" id="${prefix}-h${i}"/>`).join('');
+  return `<svg width="100%" viewBox="0 0 230 122" fill="none" style="max-width:230px;display:block;margin:0 auto;overflow:visible">
+    <rect x="8" y="54" width="178" height="60" rx="3" fill="#f9f9f9" stroke="#111" stroke-width="1.2"/>
+    <rect x="8" y="54" width="178" height="8" fill="#f3f3f3"/>
+    <line x1="8" y1="62" x2="186" y2="62" stroke="#e0e0e0" stroke-width=".7"/>
+    <path d="M16 76 Q52 74 96 76.5 Q132 75 176 77" stroke="#e8e8e8" stroke-width=".8" fill="none" stroke-linecap="round"/>
+    <path d="M14 88 Q55 86 100 88.5 Q134 87 176 89" stroke="#e8e8e8" stroke-width=".8" fill="none" stroke-linecap="round"/>
+    <path d="M14 100 Q56 98 102 100.5 Q136 99 176 101" stroke="#e8e8e8" stroke-width=".8" fill="none" stroke-linecap="round"/>
+    <path d="M14 112 Q58 110 104 112.5 Q138 111 176 113" stroke="#e8e8e8" stroke-width=".8" fill="none" stroke-linecap="round"/>
+    <path d="M8 62 L8 70 M13 54 L8 54 L8 59" stroke="#c8c8c8" stroke-width=".8" stroke-linecap="round"/>
+    <path d="M186 62 L186 70 M181 54 L186 54 L186 59" stroke="#c8c8c8" stroke-width=".8" stroke-linecap="round"/>
+    <rect x="8" y="44" width="128" height="14" rx="1" fill="#fff" stroke="#111" stroke-width="1.1"/>
+    <rect x="8" y="44" width="128" height="3.5" fill="#f0f0f0"/>
+    ${tines}
+    <rect x="38" y="6" width="72" height="42" rx="1" fill="#fff" stroke="#111" stroke-width="1.1"/>
+    <rect x="38" y="6" width="72" height="3" fill="#f5f5f5"/>
+    <line x1="46" y1="6" x2="46" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="54" y1="6" x2="54" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="62" y1="6" x2="62" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="70" y1="6" x2="70" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="78" y1="6" x2="78" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="86" y1="6" x2="86" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="94" y1="6" x2="94" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="102" y1="6" x2="102" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="14" x2="110" y2="14" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="22" x2="110" y2="22" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="30" x2="110" y2="30" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="38" x2="110" y2="38" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="46" x2="110" y2="46" stroke="#e8e8e8" stroke-width=".7"/>
+    ${holes}
+    <line x1="186" y1="82" x2="200" y2="82" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="210" cy="82" r="9" fill="#f5f5f5" stroke="#111" stroke-width="1.2"/>
+    <circle cx="210" cy="82" r="4" fill="#fff" stroke="#111" stroke-width=".9"/>
+    <circle cx="210" cy="82" r="1.8" fill="#111"/>
+  </svg>`;
 }
 
-function handleDragMove(e) {
-  if (!dragActive) return;
-  e.preventDefault();
-  const pt = e.touches ? e.touches[0] : e;
-  const angle = Math.atan2(pt.clientY - dragCy, pt.clientX - dragCx) * 180 / Math.PI;
-  let delta = angle - lastDragAngle;
-  if (delta > 180) delta -= 360;
-  if (delta < -180) delta += 360;
-  lastDragAngle = angle;
-
-  handleAngle += delta;
-  setHandleAngle(handleAngle);
-  setBoxHandleAngle(handleAngle);
-
-  if (delta > 0) {
-    lastTurnTime = Date.now();
-    onClockwiseTurn(delta);
-  } else if (delta < -2) {
-    // Counter-clockwise = slow rewind hint
-    document.getElementById('handleHint').textContent = '← turn clockwise';
-    document.getElementById('handleHint').classList.remove('active-color');
-  }
+function flashTines(prefix){
+  const n=Math.floor(Math.random()*21);
+  const t=document.getElementById(prefix+'-t'+n);
+  if(t){ t.setAttribute('stroke','#DD4444'); setTimeout(()=>t.setAttribute('stroke','#c8c8c8'),120); }
 }
 
-function handleDragEnd() {
-  dragActive = false;
-  lastTurnTime = Date.now();
-  // Pause audio shortly after letting go
-  setTimeout(() => {
-    if (Date.now() - lastTurnTime >= 280 && S.playing) {
-      pausePlayback();
-    }
-  }, 320);
-  document.removeEventListener('mousemove', handleDragMove);
-  document.removeEventListener('mouseup', handleDragEnd);
-  document.removeEventListener('touchmove', handleDragMove);
-  document.removeEventListener('touchend', handleDragEnd);
-}
-
-function setHandleAngle(a) {
-  const arm = document.getElementById('handleInteractiveArm');
-  if (arm) arm.style.transform = `rotate(${a}deg)`;
-}
-
-function setBoxHandleAngle(a) {
-  const hg = document.getElementById('handleGroup');
-  if (hg) hg.setAttribute('transform', `rotate(${a}, 318, 88)`);
-}
-
-// Each degree of clockwise turn = advance audio
-// 360° = ~1.5s of audio
-const DEG_PER_SEC = 240; // degrees per second of audio
-
-function onClockwiseTurn(deg) {
-  const tr = S.tracks[S.cur];
-  if (!tr) return;
-
-  document.getElementById('handleHint').textContent = 'keep turning…';
-  document.getElementById('handleHint').classList.add('active-color');
-
-  const timeAdvance = deg / DEG_PER_SEC;
-
-  if (tr.url) {
-    // Real audio — start playing if paused, let it run, small seek nudge
-    if (aud.paused) {
-      aud.play().catch(() => {});
-      S.playing = true;
-    }
-    // Nudge forward proportional to spin speed (fast spin = faster)
-    const nudge = timeAdvance * 0.6;
-    const newTime = Math.min(aud.duration || tr.dur, aud.currentTime + nudge);
-    aud.currentTime = newTime;
-    updateUI(newTime, aud.duration || tr.dur);
-    if (newTime >= (aud.duration || tr.dur) - 0.1) onEnd();
-  } else {
-    // Demo simulation — purely manual, no auto advance
-    simElapsed = Math.min(tr.dur, simElapsed + timeAdvance);
-    updateUI(simElapsed, tr.dur);
-    S.playing = true;
-    if (simElapsed >= tr.dur - 0.05) onEnd();
-  }
-
-  flashActiveTine();
-  animateTapeHoleActive();
-}
-
-function pausePlayback() {
-  const tr = S.tracks[S.cur];
-  if (tr && tr.url) aud.pause();
-  S.playing = false;
-  const hint = document.getElementById('handleHint');
-  if (hint) {
-    hint.textContent = 'turn clockwise to listen';
-    hint.classList.remove('active-color');
-  }
-}
-
-let activeTineTimer = null;
-function flashActiveTine() {
-  const t = document.getElementById('activeTine');
-  if (!t) return;
-  const x = 82 + Math.floor(Math.random() * 18) * 8;
-  t.setAttribute('x1', x);
-  t.setAttribute('x2', x);
-  t.setAttribute('opacity', '0.8');
-  clearTimeout(activeTineTimer);
-  activeTineTimer = setTimeout(() => t.setAttribute('opacity', '0'), 120);
-}
-
-function animateTapeHoleActive() {
-  const holes = document.querySelectorAll('#tapeHolesTop circle');
-  if (!holes.length) return;
-  holes.forEach(h => h.setAttribute('fill', '#ddd'));
-  const pick = holes[Math.floor(Math.random() * holes.length)];
-  if (pick) { pick.setAttribute('fill', '#aaa'); setTimeout(() => pick.setAttribute('fill', '#ddd'), 100); }
-}
-
-function updateUI(cur, dur) {
-  const pct = dur > 0 ? cur / dur : 0;
-
-  // Waveform
-  const n = modalWaveBars.length;
-  const idx = Math.floor(pct * n);
-  modalWaveBars.forEach((b, i) => {
-    if (i < idx) b.className = 'modal-wave-bar played';
-    else if (i === idx) b.className = 'modal-wave-bar current';
-    else b.className = 'modal-wave-bar unplayed';
-  });
-
-  // Time
-  document.getElementById('modalSub').textContent = fmt(cur) + ' / ' + fmt(dur);
-  document.getElementById('modalTime').textContent = fmt(cur) + ' / ' + fmt(dur);
-}
-
-function onEnd() {
-  S.playing = false;
-  clearInterval(simInterval);
-  document.getElementById('handleHint').textContent = '— finished —';
-  document.getElementById('handleHint').classList.remove('active-color');
-}
-
-// ================================
-// AUDIO EVENTS
-// ================================
-aud.addEventListener('timeupdate', () => {
-  const tr = S.tracks[S.cur];
-  if (!tr || !tr.url) return;
-  updateUI(aud.currentTime, aud.duration);
-});
-aud.addEventListener('ended', onEnd);
-
-// ================================
-// INIT — check hash for demo
-// ================================
-if (location.hash === '#demo') startDemo();
+drawHandle(mpHandle, 0);
+buildWaveform('mp-wf');
+renderProfile();
+checkRoute();
 </script>
 </body>
 </html>

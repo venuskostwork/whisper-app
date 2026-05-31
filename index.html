@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>whisper — by senaslowblog</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+html,body{background:#fff;color:#111;font-family:Georgia,serif;font-size:15px;line-height:1.6;min-height:100vh}
+span[onclick],div[onclick]{cursor:pointer}
+.shell{max-width:390px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:#fff;position:relative}
+nav{padding:18px 28px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ebebeb;position:sticky;top:0;background:#fff;z-index:10}
+.brand{display:flex;flex-direction:column;gap:2px;cursor:pointer}
+.brand-name{font-family:'Caveat',cursive;font-size:22px;font-weight:600;line-height:1;color:#111}
+.brand-sub{font-style:italic;font-size:11px;color:#bbb}
+.nav-r{display:flex;align-items:center;gap:16px}
+.ava{width:28px;height:28px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-style:italic;font-size:11px;color:#fff;flex-shrink:0;cursor:pointer}
+.pg{display:none;flex-direction:column;flex:1;min-height:0}
+.pg.on{display:flex;animation:fadeup .18s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.back-row{display:flex;align-items:center;gap:6px;font-size:13px;color:#aaa;cursor:pointer;margin-bottom:28px;width:fit-content}
+.back-row:hover{color:#111}
+.section-pad{padding:28px 28px 40px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page-title{font-size:20px;line-height:1.2;margin-bottom:4px}
+.page-subtitle{font-size:12px;color:#bbb;font-style:italic;margin-bottom:24px}
+.empty{text-align:center;padding:52px 0 20px;font-size:13px;color:#ccc;font-style:italic}
+.row-action{display:flex;justify-content:flex-end;margin-bottom:16px}
+.text-action{font-size:13px;color:#111;font-style:italic;display:flex;align-items:center;gap:5px;cursor:pointer}
+.text-action:hover{opacity:.45}
+
+/* AUTH */
+.auth-pg{padding:56px 28px 40px;flex:1;display:flex;flex-direction:column}
+.auth-title{font-size:22px;font-style:italic;margin-bottom:6px}
+.auth-sub{font-size:13px;color:#aaa;margin-bottom:36px;line-height:1.7}
+.auth-switch{margin-top:20px;font-size:13px;color:#aaa;font-style:italic}
+.auth-switch span{color:#111;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.auth-err{font-size:12px;color:#DD4444;font-style:italic;margin-top:12px;display:none;line-height:1.6}
+.auth-err.show{display:block}
+.auth-footer{margin-top:auto;padding-top:24px}
+.auth-logo{display:flex;flex-direction:column;gap:2px;margin-bottom:40px}
+
+/* LANDING */
+.landing{padding:44px 28px 36px;flex:1;display:flex;flex-direction:column}
+.il-wrap{display:flex;justify-content:center;margin-bottom:40px;overflow:visible}
+.l-head{font-style:italic;font-size:22px;line-height:1.5;margin-bottom:10px}
+.l-sub{font-size:13px;color:#aaa;line-height:1.9;margin-bottom:40px}
+.cta-main{font-size:15px;color:#111;display:block;margin-bottom:16px;cursor:pointer}
+.cta-main:hover{opacity:.45}
+.cta-sub{font-size:13px;color:#aaa;font-style:italic;display:block;cursor:pointer}
+.cta-sub:hover{opacity:.45}
+
+/* PROFILE */
+.profile-hero{display:flex;gap:16px;align-items:flex-start;margin-bottom:20px}
+.profile-thumb{width:56px;height:56px;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-style:italic;font-size:20px;color:#bbb}
+.profile-info{flex:1;padding-top:3px}
+.profile-name{font-size:20px;line-height:1.2;margin-bottom:5px}
+.profile-meta{font-size:12px;color:#bbb;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.dot{color:#ddd}
+.icon-btn{display:flex;align-items:center;color:#ccc;cursor:pointer}
+.icon-btn:hover{color:#111}
+
+/* FOLDERS */
+.folder-grid{display:flex;flex-direction:column;gap:0}
+.folder-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #ebebeb;cursor:pointer}
+.folder-row:first-child{border-top:1px solid #ebebeb}
+.folder-row:hover .folder-name{opacity:.45}
+.folder-icon{width:38px;height:38px;background:#f5f5f5;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.folder-info{flex:1;min-width:0}
+.folder-name{font-size:15px;line-height:1.3;transition:opacity .15s}
+.folder-meta{font-size:12px;color:#bbb;margin-top:2px;display:flex;align-items:center;gap:6px}
+.badge{font-size:10px;color:#bbb;border:1px solid #e8e8e8;padding:1px 7px;border-radius:20px;font-style:italic;flex-shrink:0}
+.badge.pub{color:#111;border-color:#ccc}
+.folder-header{margin-bottom:20px}
+.folder-header-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.folder-title{font-size:22px;line-height:1.2}
+.folder-header-acts{display:flex;gap:14px;padding-top:4px}
+.folder-submeta{font-size:12px;color:#bbb;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+
+/* TRACKS */
+.track-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #ebebeb}
+.track-row:first-child{border-top:1px solid #ebebeb}
+.track-row:hover .tr-title{opacity:.45}
+.tr-icon{width:34px;height:34px;border-radius:50%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.tr-body{flex:1;min-width:0;cursor:pointer}
+.tr-title{font-style:italic;font-size:15px;line-height:1.35;transition:opacity .15s;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr-meta{display:flex;align-items:center;gap:5px;font-size:12px;color:#c0c0c0;margin-top:2px}
+
+/* FORMS */
+.fld{margin-bottom:24px}
+.fld label{display:block;font-size:12px;color:#bbb;font-style:italic;margin-bottom:8px}
+.fld input,.fld textarea,.fld select{border:none;border-bottom:1px solid #ebebeb;padding:7px 0;font-size:15px;font-family:Georgia,serif;color:#111;font-style:italic;background:transparent;outline:none;transition:border-color .2s;line-height:1.5;width:100%;display:block;-webkit-appearance:none;appearance:none;border-radius:0}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-bottom-color:#111}
+.fld input::placeholder,.fld textarea::placeholder{color:#d0d0d0}
+.fld input[type=password]{letter-spacing:.1em}
+.radio-group{display:flex;gap:20px;padding:4px 0}
+.radio-opt{display:flex;align-items:center;gap:7px;font-size:14px;color:#777;cursor:pointer;font-style:italic}
+.radio-opt input{width:auto;border:none;accent-color:#111}
+
+/* AUDIO ZONE */
+.az{border:1px dashed #e0e0e0;padding:22px 20px;text-align:center;transition:border-color .2s;margin-bottom:14px;cursor:pointer}
+.az:hover{border-color:#bbb}
+.az-lbl{font-size:14px;color:#aaa;font-style:italic;margin-top:8px}
+.az-hint{font-size:11px;color:#ccc;margin-top:3px;letter-spacing:.3px}
+.az.filled{border-style:solid;border-color:#111}
+.az.filled .az-lbl{color:#111}
+.or-sep{display:flex;align-items:center;gap:12px;margin:12px 0;font-size:12px;color:#d0d0d0;font-style:italic}
+.or-sep::before,.or-sep::after{content:'';flex:1;height:1px;background:#ebebeb}
+.rec-lnk{font-size:14px;color:#111;padding:10px 0;display:flex;align-items:center;gap:10px;font-style:italic;width:100%;cursor:pointer}
+.rec-lnk:hover{opacity:.5}
+.rec-lnk.rr{color:#DD4444}
+.rdot{width:6px;height:6px;border-radius:50%;background:#DD4444;flex-shrink:0}
+.rdot.p{animation:blink .9s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.mwv{display:flex;align-items:flex-end;gap:2px;height:20px;justify-content:center;margin:8px 0;opacity:0;transition:opacity .3s}
+.mwv.show{opacity:1}
+.mwv span{display:block;width:3px;border-radius:1px;background:#e8e8e8}
+.cc{text-align:right;font-size:11px;color:#ccc;margin-top:4px}
+.submit-lnk{font-size:15px;font-style:italic;color:#d0d0d0;padding:20px 0 4px;display:block;text-align:right;transition:color .15s;width:100%;cursor:default}
+.submit-lnk.go{color:#111;cursor:pointer}
+.submit-lnk.go:hover{opacity:.5}
+.err-msg{font-size:12px;color:#DD4444;font-style:italic;margin-top:8px;display:none}
+.err-msg.show{display:block}
+.progress-bar{height:2px;background:#ebebeb;margin:8px 0;border-radius:1px;overflow:hidden;display:none}
+.progress-bar.show{display:block}
+.progress-fill{height:100%;background:#111;width:0%;transition:width .3s}
+
+/* SHARE */
+.share-pg{padding:56px 28px 40px;flex:1;text-align:center;display:flex;flex-direction:column;align-items:center}
+.sh-head{font-size:22px;font-style:italic;margin-bottom:8px}
+.sh-sub{font-size:13px;color:#aaa;margin-bottom:28px}
+.sh-link{font-size:13px;background:#f8f8f8;padding:12px 16px;text-align:left;color:#888;margin-bottom:28px;width:100%;display:block;word-break:break-all;line-height:1.6}
+.sh-row{display:flex;gap:28px;justify-content:center;margin-bottom:16px}
+.sh-btn{font-size:14px;color:#111;font-style:italic;cursor:pointer}
+.sh-btn:hover{opacity:.45}
+.sh-prev{font-size:13px;color:#aaa;font-style:italic;display:block;margin-bottom:28px;cursor:pointer}
+.sh-prev:hover{color:#111}
+.sh-tag{font-size:11px;color:#ccc}
+
+/* MODAL */
+.mover{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.mover.open{display:flex}
+.msheet{background:#fff;border-radius:12px 12px 0 0;width:100%;max-width:390px;max-height:90vh;overflow-y:auto;padding:14px 28px 48px;animation:slideup .22s ease;-webkit-overflow-scrolling:touch}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mdrag{width:28px;height:2px;background:#e0e0e0;border-radius:2px;margin:0 auto 22px}
+.mhdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.mtitle{font-style:italic;font-size:18px;line-height:1.4;max-width:220px}
+.mclose{font-size:15px;color:#ccc;cursor:pointer;line-height:1}
+.mclose:hover{color:#111}
+.mtime{font-size:12px;color:#bbb;margin-bottom:16px}
+.mwf-bar{display:flex;align-items:flex-end;gap:2px;height:26px;margin-bottom:20px}
+.mwf-bar span{display:block;flex:1;border-radius:1px;transition:background .08s}
+.bp{background:#111}.bc{background:#DD4444}.bu{background:#e8e8e8}
+.mbx{display:flex;justify-content:center;margin-bottom:18px;overflow:visible}
+.harea{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:12px;user-select:none}
+.hcv-el{touch-action:none;cursor:grab}
+.hcv-el:active{cursor:grabbing}
+.hhint{font-size:12px;color:#bbb;font-style:italic;text-align:center;transition:color .15s;height:16px}
+.hhint.act{color:#DD4444}.hhint.dn{color:#111}
+.mnote-wrap{border-top:1px solid #ebebeb;padding-top:14px;margin-top:6px}
+.mnote-wrap p{font-size:13px;font-style:italic;color:#999;line-height:1.85}
+
+/* BOTTOM SHEET */
+.bsheet-over{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:300;display:none;align-items:flex-end;justify-content:center}
+.bsheet-over.open{display:flex}
+.bsheet{background:#fff;border-radius:12px 12px 0 0;width:100%;max-width:390px;padding:14px 0 40px;animation:slideup .2s ease}
+.bsheet-drag{width:28px;height:2px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px}
+.bsheet-item{padding:14px 28px;font-size:15px;color:#111;cursor:pointer;font-family:Georgia,serif;font-style:italic;display:flex;align-items:center;gap:12px}
+.bsheet-item:hover{background:#f8f8f8}
+.bsheet-item.danger{color:#DD4444}
+.bsheet-item svg{flex-shrink:0;color:#bbb}
+
+/* TOAST + SPINNER */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(8px);background:#111;color:#fff;font-family:Georgia,serif;font-style:italic;font-size:13px;padding:10px 20px;border-radius:3px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #e0e0e0;border-top-color:#111;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-pg{flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;color:#ccc;font-style:italic;gap:8px}
+
+footer{padding:18px 28px;border-top:1px solid #ebebeb;text-align:center;font-size:11px;color:#ccc;font-style:italic;margin-top:auto}
+</style>
+</head>
+<body>
+<div class="shell" id="app">
+
+  <nav>
+    <div class="brand" onclick="goHome()">
+      <span class="brand-name">whisper</span>
+      <span class="brand-sub">by senaslowblog</span>
+    </div>
+    <div class="nav-r" id="nav-r">
+      <!-- populated by auth state -->
+    </div>
+  </nav>
+
+  <!-- LOADING -->
+  <div class="pg on" id="pg-loading">
+    <div class="loading-pg"><span class="spinner"></span>loading...</div>
+  </div>
+
+  <!-- AUTH: LOGIN -->
+  <div class="pg" id="pg-login">
+    <div class="auth-pg">
+      <div class="auth-logo">
+        <span class="brand-name">whisper</span>
+        <span class="brand-sub">by senaslowblog</span>
+      </div>
+      <p class="auth-title">Sign in</p>
+      <p class="auth-sub">Enter your email and password to continue.</p>
+      <div class="fld">
+        <label>email</label>
+        <input type="email" id="li-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="fld">
+        <label>password</label>
+        <input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="err-msg" id="li-err"></div>
+      <span class="submit-lnk go" id="li-btn" onclick="doLogin()">Sign in →</span>
+      <p class="auth-switch">No account? <span onclick="showPg('pg-register')">Create one</span></p>
+    </div>
+  </div>
+
+  <!-- AUTH: REGISTER -->
+  <div class="pg" id="pg-register">
+    <div class="auth-pg">
+      <div class="auth-logo">
+        <span class="brand-name">whisper</span>
+        <span class="brand-sub">by senaslowblog</span>
+      </div>
+      <p class="auth-title">Create account</p>
+      <p class="auth-sub">Choose a display name and set your password.</p>
+      <div class="fld">
+        <label>display name</label>
+        <input type="text" id="rg-name" placeholder="your name" autocomplete="name">
+      </div>
+      <div class="fld">
+        <label>email</label>
+        <input type="email" id="rg-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="fld">
+        <label>password</label>
+        <input type="password" id="rg-pass" placeholder="min. 6 characters" autocomplete="new-password">
+      </div>
+      <div class="err-msg" id="rg-err"></div>
+      <span class="submit-lnk go" id="rg-btn" onclick="doRegister()">Create account →</span>
+      <p class="auth-switch">Already have an account? <span onclick="showPg('pg-login')">Sign in</span></p>
+    </div>
+  </div>
+
+  <!-- LANDING (logged in) -->
+  <div class="pg" id="pg-landing">
+    <div class="landing">
+      <div class="il-wrap">
+        <svg width="100%" viewBox="0 0 250 150" fill="none" style="max-width:250px;display:block;overflow:visible">
+          <rect x="14" y="72" width="182" height="70" rx="3" fill="#f9f9f9" stroke="#111" stroke-width="1.3"/>
+          <rect x="14" y="72" width="182" height="9" fill="#f3f3f3"/>
+          <line x1="14" y1="81" x2="196" y2="81" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M22 95 Q65 93 115 95.5 Q152 94 188 96" stroke="#e8e8e8" stroke-width=".85" fill="none" stroke-linecap="round"/>
+          <path d="M20 107 Q68 105 120 107.5 Q155 106 188 108" stroke="#e8e8e8" stroke-width=".85" fill="none" stroke-linecap="round"/>
+          <path d="M20 119 Q70 117 122 119.5 Q156 118 188 120" stroke="#e8e8e8" stroke-width=".85" fill="none" stroke-linecap="round"/>
+          <path d="M22 131 Q72 129 124 131.5 Q158 130 188 132" stroke="#e8e8e8" stroke-width=".85" fill="none" stroke-linecap="round"/>
+          <rect x="14" y="60" width="138" height="16" rx="1" fill="#fff" stroke="#111" stroke-width="1.2"/>
+          <rect x="14" y="60" width="138" height="4" fill="#f0f0f0"/>
+          <line x1="20" y1="66" x2="20" y2="79" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="26" y1="66" x2="26" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="32" y1="66" x2="32" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="38" y1="66" x2="38" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="44" y1="66" x2="44" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="50" y1="66" x2="50" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="56" y1="66" x2="56" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="62" y1="66" x2="62" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="68" y1="66" x2="68" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="74" y1="66" x2="74" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="80" y1="66" x2="80" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="86" y1="66" x2="86" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="92" y1="66" x2="92" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="98" y1="66" x2="98" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="104" y1="66" x2="104" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="110" y1="66" x2="110" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="116" y1="66" x2="116" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="122" y1="66" x2="122" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="128" y1="66" x2="128" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="134" y1="66" x2="134" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="140" y1="66" x2="140" y2="78" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <line x1="146" y1="66" x2="146" y2="81" stroke="#c8c8c8" stroke-width="1.15" stroke-linecap="round"/>
+          <rect x="44" y="6" width="76" height="58" rx="1" fill="#fff" stroke="#111" stroke-width="1.2"/>
+          <rect x="44" y="6" width="76" height="3" fill="#f5f5f5"/>
+          <line x1="52" y1="6" x2="52" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="60" y1="6" x2="60" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="68" y1="6" x2="68" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="76" y1="6" x2="76" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="84" y1="6" x2="84" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="92" y1="6" x2="92" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="100" y1="6" x2="100" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="108" y1="6" x2="108" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="116" y1="6" x2="116" y2="64" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="14" x2="120" y2="14" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="23" x2="120" y2="23" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="32" x2="120" y2="32" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="41" x2="120" y2="41" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="50" x2="120" y2="50" stroke="#e8e8e8" stroke-width=".7"/>
+          <line x1="44" y1="59" x2="120" y2="59" stroke="#e8e8e8" stroke-width=".7"/>
+          <circle cx="52" cy="10" r="2.8" fill="#111"/>
+          <circle cx="76" cy="10" r="2.8" fill="#111"/>
+          <circle cx="108" cy="10" r="2.8" fill="#111"/>
+          <circle cx="60" cy="19" r="2.8" fill="#111"/>
+          <circle cx="92" cy="19" r="2.8" fill="#111"/>
+          <circle cx="116" cy="28" r="2.8" fill="#111"/>
+          <circle cx="68" cy="28" r="2.8" fill="#111"/>
+          <circle cx="52" cy="37" r="2.8" fill="#111"/>
+          <circle cx="100" cy="37" r="2.8" fill="#111"/>
+          <circle cx="84" cy="46" r="2.8" fill="#111"/>
+          <circle cx="60" cy="55" r="2.8" fill="#111"/>
+          <circle cx="108" cy="55" r="2.8" fill="#111"/>
+          <line x1="196" y1="104" x2="214" y2="104" stroke="#111" stroke-width="1.9" stroke-linecap="round"/>
+          <circle cx="216" cy="104" r="10" fill="#f5f5f5" stroke="#111" stroke-width="1.3"/>
+          <circle cx="216" cy="104" r="4.5" fill="#fff" stroke="#111" stroke-width="1"/>
+          <circle cx="216" cy="104" r="1.8" fill="#111"/>
+        </svg>
+      </div>
+      <p class="l-head">Leave a voice, they'll turn to hear.</p>
+      <p class="l-sub">Record your voice. Send a link. They turn a handle to listen — like a music box, but it's you.</p>
+      <span class="cta-main" onclick="showPg('pg-profile')">Go to my profile →</span>
+    </div>
+    <footer>whisper — voice notes by sena</footer>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="pg" id="pg-profile">
+    <div class="section-pad">
+      <div class="profile-hero">
+        <div class="profile-thumb" id="prof-thumb">s</div>
+        <div class="profile-info">
+          <div class="profile-name" id="prof-name">—</div>
+          <div class="profile-meta">
+            <span id="prof-folder-count">0 folders</span>
+            <span class="dot">·</span>
+            <span id="prof-whisper-count">0 whispers</span>
+          </div>
+        </div>
+      </div>
+      <div class="row-action">
+        <span class="text-action" onclick="showPg('pg-new-folder')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
+          new folder
+        </span>
+      </div>
+      <div class="folder-grid" id="folder-grid"></div>
+    </div>
+  </div>
+
+  <!-- NEW FOLDER -->
+  <div class="pg" id="pg-new-folder">
+    <div class="section-pad">
+      <span class="back-row" onclick="showPg('pg-profile')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+        profile
+      </span>
+      <p class="page-title">New folder</p>
+      <p class="page-subtitle">Group your whispers by person, moment, or theme.</p>
+      <div class="fld">
+        <label>folder name</label>
+        <input type="text" id="fn" placeholder="for my sister..." maxlength="60" oninput="ckFolder()">
+      </div>
+      <div class="fld">
+        <label>visibility</label>
+        <div class="radio-group">
+          <label class="radio-opt"><input type="radio" name="fvis" value="private" checked> private</label>
+          <label class="radio-opt"><input type="radio" name="fvis" value="unlisted"> unlisted</label>
+        </div>
+      </div>
+      <div class="fld">
+        <label>description <span style="color:#d0d0d0">(optional)</span></label>
+        <input type="text" id="fdesc" placeholder="a little context..." maxlength="120">
+      </div>
+      <span class="submit-lnk" id="folder-submit" onclick="createFolder()">Create folder →</span>
+    </div>
+  </div>
+
+  <!-- FOLDER VIEW -->
+  <div class="pg" id="pg-folder">
+    <div class="section-pad">
+      <span class="back-row" onclick="showPg('pg-profile')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+        profile
+      </span>
+      <div class="folder-header">
+        <div class="folder-header-row">
+          <div class="folder-title" id="fd-title"></div>
+          <div class="folder-header-acts">
+            <span class="icon-btn" onclick="openFolderOptions()">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="3" r=".8"/><circle cx="8" cy="8" r=".8"/><circle cx="8" cy="13" r=".8"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="folder-submeta" id="fd-meta"></div>
+        <div id="fd-desc" style="font-size:13px;color:#999;font-style:italic;margin-top:6px;display:none"></div>
+      </div>
+      <div class="row-action">
+        <span class="text-action" onclick="showCreateWhisper()">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
+          add whisper
+        </span>
+      </div>
+      <div id="whisper-list"></div>
+      <div class="list-foot" id="list-foot" style="display:none">— end —</div>
+    </div>
+  </div>
+
+  <!-- CREATE WHISPER -->
+  <div class="pg" id="pg-create-whisper">
+    <div class="section-pad">
+      <span class="back-row" id="create-whisper-back" onclick="backToFolder()">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+        <span id="create-whisper-back-label">folder</span>
+      </span>
+      <p class="page-title">New whisper</p>
+      <p class="page-subtitle" id="cw-folder-label"></p>
+      <div class="fld">
+        <label>title</label>
+        <input type="text" id="wt" placeholder="for you, on this morning..." maxlength="80" oninput="ckWhisper()">
+      </div>
+      <div class="fld">
+        <label>for whom <span style="color:#d0d0d0">(optional)</span></label>
+        <input type="text" id="wfw" placeholder="a name..." maxlength="60">
+      </div>
+      <div class="fld">
+        <label>audio</label>
+        <div class="az" id="waz" onclick="document.getElementById('wfi').click()">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="#ccc" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><polyline points="2.5,10.5 8.5,4.5 14.5,10.5"/><line x1="8.5" y1="4.5" x2="8.5" y2="15"/><line x1="4" y1="15" x2="13" y2="15"/></svg>
+          <div class="az-lbl">tap to choose an audio file</div>
+          <div class="az-hint">MP3 · WAV · M4A · OGG</div>
+        </div>
+        <input type="file" id="wfi" accept="audio/*" style="display:none" onchange="handleFile(this)">
+        <div class="progress-bar" id="wfi-progress"><div class="progress-fill" id="wfi-fill"></div></div>
+        <div class="mwv" id="wmwv"></div>
+        <div class="or-sep">or</div>
+        <div class="rec-lnk" id="wrb" onclick="toggleRecord()">
+          <div class="rdot" id="wrd"></div>
+          <span id="wrl">record your voice</span>
+        </div>
+        <div class="err-msg" id="rec-err"></div>
+      </div>
+      <div class="fld">
+        <label>message <span style="color:#d0d0d0">(optional)</span></label>
+        <textarea id="wmsg" rows="3" placeholder="something you want them to read first..." maxlength="500" style="resize:none" oninput="document.getElementById('wcc').textContent=this.value.length"></textarea>
+        <div class="cc"><span id="wcc">0</span>/500</div>
+      </div>
+      <span class="submit-lnk" id="whisper-submit" onclick="saveWhisper()">Save whisper →</span>
+    </div>
+  </div>
+
+  <!-- SHARE PAGE -->
+  <div class="pg" id="pg-share">
+    <div class="share-pg">
+      <p class="sh-head">whisper saved.</p>
+      <p class="sh-sub">Share this link — anyone with it can listen.</p>
+      <span class="sh-link" id="sh-link-display"></span>
+      <div class="sh-row">
+        <span class="sh-btn" onclick="copyLink()">copy link</span>
+        <span class="sh-btn" onclick="shareNative()">share</span>
+      </div>
+      <span class="sh-prev" onclick="previewWhisper()">preview experience →</span>
+      <p class="sh-tag">whisper — by senaslowblog</p>
+    </div>
+  </div>
+
+  <!-- LISTEN PAGE (public, no auth needed) -->
+  <div class="pg" id="pg-listen">
+    <div class="section-pad" id="listen-content"></div>
+  </div>
+
+  <!-- MODAL PLAYER -->
+  <div class="mover" id="modal-player" onclick="if(event.target===this)closeModal()">
+    <div class="msheet">
+      <div class="mdrag"></div>
+      <div class="mhdr">
+        <div class="mtitle" id="mp-title"></div>
+        <span class="mclose" onclick="closeModal()">✕</span>
+      </div>
+      <div class="mtime" id="mp-time">0:00 / 0:00</div>
+      <div class="mwf-bar" id="mp-wf"></div>
+      <div class="mbx" id="mp-box"></div>
+      <div class="harea">
+        <canvas id="mp-handle" width="80" height="80" class="hcv-el"></canvas>
+        <div class="hhint" id="mp-hint">turn clockwise to listen</div>
+      </div>
+      <div class="mnote-wrap" id="mp-note" style="display:none">
+        <p id="mp-note-text"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOLDER OPTIONS -->
+  <div class="bsheet-over" id="folder-opts" onclick="if(event.target===this)closeFolderOptions()">
+    <div class="bsheet">
+      <div class="bsheet-drag"></div>
+      <div class="bsheet-item" onclick="renameFolderPrompt()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5l2 2L5 11l-2.5.5.5-2.5 6.5-6.5z"/></svg>
+        Rename folder
+      </div>
+      <div class="bsheet-item" onclick="toggleFolderVisibility()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>
+        <span id="vis-toggle-label">Change visibility</span>
+      </div>
+      <div class="bsheet-item danger" onclick="deleteFolderConfirm()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 12,4"/><path d="M5 4V2.5h4V4"/><path d="M5.5 6.5v4M8.5 6.5v4"/><rect x="3" y="4" width="8" height="8" rx="1"/></svg>
+        Delete folder
+      </div>
+    </div>
+  </div>
+
+  <!-- WHISPER OPTIONS -->
+  <div class="bsheet-over" id="whisper-opts" onclick="if(event.target===this)closeWhisperOptions()">
+    <div class="bsheet">
+      <div class="bsheet-drag"></div>
+      <div class="bsheet-item" onclick="copyWhisperLink()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 7.5a3 3 0 0 0 4.5.5l2-2a3 3 0 0 0-4.5-4l-1 1"/><path d="M8.5 6.5a3 3 0 0 0-4.5-.5l-2 2a3 3 0 0 0 4.5 4l1-1"/></svg>
+        Copy link
+      </div>
+      <div class="bsheet-item danger" onclick="deleteWhisperConfirm()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 12,4"/><path d="M5 4V2.5h4V4"/><path d="M5.5 6.5v4M8.5 6.5v4"/><rect x="3" y="4" width="8" height="8" rx="1"/></svg>
+        Delete whisper
+      </div>
+    </div>
+  </div>
+
+</div><!-- .shell -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// SUPABASE CONFIG — replace with your project values
+// ============================================================
+const SUPABASE_URL  = 'https://YOUR_PROJECT_ID.supabase.co';
+const SUPABASE_KEY  = 'YOUR_ANON_PUBLIC_KEY';
+const STORAGE_BUCKET = 'whisper-audio';
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ============================================================
+// STATE
+// ============================================================
+let currentUser    = null;
+let currentProfile = null;
+let activeFolderId = null;
+let activeWhisperId = null;
+let newAudioBlob   = null;
+let newAudioDuration = 0;
+let mediaRecorder  = null;
+let recChunks      = [];
+let recTimer       = null;
+let recSeconds     = 0;
+let isRecording    = false;
+// handle drag state
+let mDrag=false, mLa=null, mHa=0, mAp=0, mPt=null, mAudioEl=null;
+const DPS = 260;
+
+// ============================================================
+// UTILS
+// ============================================================
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function fmt(s){ if(!s||isNaN(s))return'0:00'; const m=Math.floor(s/60),x=Math.floor(s%60); return m+':'+(x<10?'0':'')+x; }
+function fmtDate(ts){ return new Date(ts).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg,dur=2200){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
+function setBusy(btnId, busy, label){ const b=document.getElementById(btnId); if(!b)return; b.style.opacity=busy?'.5':'1'; b.style.pointerEvents=busy?'none':''; if(label)b.textContent=label; }
+
+// ============================================================
+// PAGE NAV
+// ============================================================
+function showPg(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='pg-profile') renderProfile();
+}
+
+function goHome(){
+  if(currentUser) showPg('pg-landing');
+  else showPg('pg-login');
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function updateNav(){
+  const navR = document.getElementById('nav-r');
+  if(currentUser){
+    const initial = (currentProfile?.display_name || currentUser.email || '?')[0].toUpperCase();
+    navR.innerHTML = `<span class="ava" onclick="showPg('pg-profile')">${esc(initial)}</span>
+      <span style="font-size:13px;color:#bbb;font-style:italic;cursor:pointer" onclick="doSignOut()">out</span>`;
+  } else {
+    navR.innerHTML = `<span style="font-size:13px;color:#111;font-style:italic;cursor:pointer" onclick="showPg('pg-login')">sign in</span>`;
+  }
+}
+
+async function doLogin(){
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  const errEl = document.getElementById('li-err');
+  errEl.classList.remove('show');
+  if(!email||!pass){ errEl.textContent='Please fill in all fields.'; errEl.classList.add('show'); return; }
+  setBusy('li-btn', true, 'Signing in...');
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  setBusy('li-btn', false, 'Sign in →');
+  if(error){ errEl.textContent = error.message; errEl.classList.add('show'); return; }
+  currentUser = data.user;
+  await loadProfile();
+  updateNav();
+  showPg('pg-landing');
+}
+
+async function doRegister(){
+  const name  = document.getElementById('rg-name').value.trim();
+  const email = document.getElementById('rg-email').value.trim();
+  const pass  = document.getElementById('rg-pass').value;
+  const errEl = document.getElementById('rg-err');
+  errEl.classList.remove('show');
+  if(!name||!email||!pass){ errEl.textContent='Please fill in all fields.'; errEl.classList.add('show'); return; }
+  if(pass.length < 6){ errEl.textContent='Password must be at least 6 characters.'; errEl.classList.add('show'); return; }
+  setBusy('rg-btn', true, 'Creating...');
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  setBusy('rg-btn', false, 'Create account →');
+  if(error){ errEl.textContent = error.message; errEl.classList.add('show'); return; }
+  currentUser = data.user;
+  // Create profile row
+  await sb.from('profiles').insert({ id: currentUser.id, display_name: name, email });
+  await loadProfile();
+  updateNav();
+  showToast('Welcome! Account created.');
+  showPg('pg-landing');
+}
+
+async function doSignOut(){
+  await sb.auth.signOut();
+  currentUser = null; currentProfile = null;
+  updateNav();
+  showPg('pg-login');
+}
+
+async function loadProfile(){
+  if(!currentUser) return;
+  const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  currentProfile = data;
+  if(currentProfile){
+    const initial = (currentProfile.display_name || currentUser.email || '?')[0].toUpperCase();
+    document.getElementById('prof-name').textContent = currentProfile.display_name || currentUser.email;
+    document.getElementById('prof-thumb').textContent = initial;
+  }
+}
+
+// ============================================================
+// PROFILE
+// ============================================================
+async function renderProfile(){
+  if(!currentUser){ showPg('pg-login'); return; }
+  const { data: folders } = await sb.from('folders').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false});
+  const { data: whispers } = await sb.from('whispers').select('id').eq('user_id', currentUser.id);
+  const fArr = folders || [], wArr = whispers || [];
+  document.getElementById('prof-folder-count').textContent = fArr.length + ' folder' + (fArr.length!==1?'s':'');
+  document.getElementById('prof-whisper-count').textContent = wArr.length + ' whisper' + (wArr.length!==1?'s':'');
+  const grid = document.getElementById('folder-grid');
+  if(fArr.length===0){ grid.innerHTML='<div class="empty">no folders yet — create one to start</div>'; return; }
+  grid.innerHTML = fArr.map(f=>{
+    const count = wArr.filter ? 0 : 0; // count fetched below per folder if needed
+    return `<div class="folder-row" onclick="openFolder('${esc(f.id)}')">
+      <div class="folder-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c8c8c8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 5a1 1 0 0 1 1-1h4l2 2h6a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+        </svg>
+      </div>
+      <div class="folder-info">
+        <div class="folder-name">${esc(f.name)}</div>
+        <div class="folder-meta">
+          <span>${fmtDate(f.created_at)}</span>
+        </div>
+      </div>
+      <span class="badge${f.visibility==='unlisted'?' pub':''}">${esc(f.visibility)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// FOLDER
+// ============================================================
+function ckFolder(){
+  const v = document.getElementById('fn').value.trim();
+  document.getElementById('folder-submit').classList.toggle('go', v.length>0);
+}
+
+async function createFolder(){
+  if(!currentUser) return;
+  const name = document.getElementById('fn').value.trim();
+  if(!name) return;
+  const vis  = document.querySelector('input[name="fvis"]:checked').value;
+  const desc = document.getElementById('fdesc').value.trim();
+  const { data, error } = await sb.from('folders').insert({
+    user_id: currentUser.id, name, visibility: vis, description: desc || null
+  }).select().single();
+  if(error){ showToast('Error: ' + error.message); return; }
+  document.getElementById('fn').value='';
+  document.getElementById('fdesc').value='';
+  document.querySelector('input[name="fvis"][value="private"]').checked=true;
+  document.getElementById('folder-submit').classList.remove('go');
+  showToast('folder created');
+  openFolder(data.id);
+}
+
+async function openFolder(fid){
+  activeFolderId = fid;
+  const { data: f } = await sb.from('folders').select('*').eq('id', fid).single();
+  if(!f) return;
+  document.getElementById('fd-title').textContent = f.name;
+  const { data: whispers } = await sb.from('whispers').select('*').eq('folder_id', fid).order('created_at', {ascending:false});
+  const wArr = whispers || [];
+  document.getElementById('fd-meta').innerHTML = `
+    <span>${esc(f.visibility)}</span>
+    <span style="color:#ddd">·</span>
+    <span>${wArr.length} whisper${wArr.length!==1?'s':''}</span>
+    <span style="color:#ddd">·</span>
+    <span>${fmtDate(f.created_at)}</span>`;
+  const descEl = document.getElementById('fd-desc');
+  if(f.description){ descEl.textContent=f.description; descEl.style.display='block'; }
+  else{ descEl.style.display='none'; }
+  const list = document.getElementById('whisper-list');
+  const foot = document.getElementById('list-foot');
+  if(wArr.length===0){ list.innerHTML='<div class="empty">no whispers yet</div>'; foot.style.display='none'; return; }
+  list.innerHTML = wArr.map(w=>`
+    <div class="track-row">
+      <div class="tr-icon" onclick="openModal('${esc(w.id)}')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#c8c8c8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="4.5" cy="11" r="1.8"/><circle cx="11" cy="9.5" r="1.8"/>
+          <polyline points="6.3,11 6.3,3.5 12.8,2 12.8,9.5"/>
+        </svg>
+      </div>
+      <div class="tr-body" onclick="openModal('${esc(w.id)}')">
+        <div class="tr-title">${esc(w.title)}</div>
+        <div class="tr-meta">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><circle cx="5" cy="5" r="4"/><polyline points="5,2.5 5,5 7,6.5"/></svg>
+          ${fmt(w.duration)} · ${fmtDate(w.created_at)}
+        </div>
+      </div>
+      <span class="icon-btn" onclick="openWhisperOptions('${esc(w.id)}')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="7" cy="2.5" r=".8"/><circle cx="7" cy="7" r=".8"/><circle cx="7" cy="11.5" r=".8"/></svg>
+      </span>
+    </div>`).join('');
+  foot.style.display = wArr.length >= 3 ? 'block' : 'none';
+  showPg('pg-folder');
+}
+
+function openFolderOptions(){
+  document.getElementById('folder-opts').classList.add('open');
+}
+function closeFolderOptions(){ document.getElementById('folder-opts').classList.remove('open'); }
+
+async function renameFolderPrompt(){
+  closeFolderOptions();
+  const { data: f } = await sb.from('folders').select('name').eq('id', activeFolderId).single();
+  const name = prompt('Rename folder:', f?.name || '');
+  if(!name || !name.trim()) return;
+  await sb.from('folders').update({ name: name.trim() }).eq('id', activeFolderId);
+  showToast('renamed'); openFolder(activeFolderId);
+}
+
+async function toggleFolderVisibility(){
+  closeFolderOptions();
+  const { data: f } = await sb.from('folders').select('visibility').eq('id', activeFolderId).single();
+  const newVis = f.visibility === 'private' ? 'unlisted' : 'private';
+  await sb.from('folders').update({ visibility: newVis }).eq('id', activeFolderId);
+  showToast('visibility updated'); openFolder(activeFolderId);
+}
+
+async function deleteFolderConfirm(){
+  closeFolderOptions();
+  if(!confirm('Delete this folder and all its whispers?')) return;
+  // Delete audio files from storage
+  const { data: wArr } = await sb.from('whispers').select('audio_path').eq('folder_id', activeFolderId);
+  if(wArr && wArr.length){
+    const paths = wArr.map(w=>w.audio_path).filter(Boolean);
+    if(paths.length) await sb.storage.from(STORAGE_BUCKET).remove(paths);
+  }
+  await sb.from('whispers').delete().eq('folder_id', activeFolderId);
+  await sb.from('folders').delete().eq('id', activeFolderId);
+  activeFolderId = null;
+  showToast('folder deleted'); showPg('pg-profile');
+}
+
+// ============================================================
+// CREATE WHISPER
+// ============================================================
+function showCreateWhisper(){
+  const fEl = document.getElementById('fd-title');
+  document.getElementById('cw-folder-label').textContent = 'in ' + (fEl ? fEl.textContent : '');
+  document.getElementById('create-whisper-back-label').textContent = fEl ? fEl.textContent : 'folder';
+  newAudioBlob=null; newAudioDuration=0;
+  ['wt','wfw','wmsg'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('wcc').textContent='0';
+  document.getElementById('wmwv').classList.remove('show');
+  document.getElementById('wmwv').innerHTML='';
+  document.getElementById('whisper-submit').classList.remove('go');
+  document.getElementById('rec-err').classList.remove('show');
+  document.getElementById('wfi-progress').classList.remove('show');
+  resetAudioZone();
+  showPg('pg-create-whisper');
+}
+
+function resetAudioZone(){
+  const az=document.getElementById('waz');
+  az.classList.remove('filled');
+  az.innerHTML=`<svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="#ccc" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><polyline points="2.5,10.5 8.5,4.5 14.5,10.5"/><line x1="8.5" y1="4.5" x2="8.5" y2="15"/><line x1="4" y1="15" x2="13" y2="15"/></svg><div class="az-lbl">tap to choose an audio file</div><div class="az-hint">MP3 · WAV · M4A · OGG</div>`;
+  az.onclick=()=>document.getElementById('wfi').click();
+}
+
+function backToFolder(){
+  if(activeFolderId) openFolder(activeFolderId);
+  else showPg('pg-profile');
+}
+
+function ckWhisper(){
+  const ok = document.getElementById('wt').value.trim() && newAudioBlob;
+  document.getElementById('whisper-submit').classList.toggle('go', !!ok);
+}
+
+function handleFile(input){
+  if(!input.files.length) return;
+  const file = input.files[0];
+  if(file.size > 50*1024*1024){ showToast('file is too big — max 50MB'); return; }
+  newAudioBlob = file;
+  getAudioDuration(file).then(d=>{ newAudioDuration=d; });
+  const az=document.getElementById('waz');
+  az.classList.add('filled');
+  const sizeMB = (file.size/1024/1024).toFixed(1);
+  az.innerHTML=`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#DD4444" stroke-width="1.2" stroke-linecap="round" style="display:block;margin:0 auto"><polyline points="2,10 7.5,4.5 13,10"/><line x1="7.5" y1="4.5" x2="7.5" y2="14"/><line x1="3.5" y1="14" x2="11.5" y2="14"/></svg><div class="az-lbl">${esc(file.name)}</div><div class="az-hint">loaded · ${sizeMB}MB · tap to change</div>`;
+  az.onclick=()=>document.getElementById('wfi').click();
+  buildMiniWave('wmwv');
+  ckWhisper();
+}
+
+function getAudioDuration(blob){
+  return new Promise(res=>{
+    const url=URL.createObjectURL(blob);
+    const a=new Audio();
+    a.onloadedmetadata=()=>{ res(a.duration||0); URL.revokeObjectURL(url); };
+    a.onerror=()=>res(0);
+    a.src=url;
+  });
+}
+
+async function toggleRecord(){
+  const rb=document.getElementById('wrb'), rd=document.getElementById('wrd'), rl=document.getElementById('wrl');
+  const err=document.getElementById('rec-err');
+  if(!isRecording){
+    if(!navigator.mediaDevices?.getUserMedia){ err.textContent='recording not supported here'; err.classList.add('show'); return; }
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      err.classList.remove('show');
+      const mime=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus','audio/ogg'].find(m=>MediaRecorder.isTypeSupported(m))||'';
+      recChunks=[];
+      mediaRecorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});
+      mediaRecorder.ondataavailable=e=>{ if(e.data.size>0)recChunks.push(e.data); };
+      mediaRecorder.onstop=()=>{
+        const blob=new Blob(recChunks,{type:mediaRecorder.mimeType||'audio/webm'});
+        newAudioBlob=blob; newAudioDuration=recSeconds;
+        const ext=blob.type.includes('mp4')||blob.type.includes('m4a')?'m4a':'webm';
+        const az=document.getElementById('waz');
+        az.classList.add('filled');
+        const sizeMB=(blob.size/1024/1024).toFixed(1);
+        az.innerHTML=`<svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#DD4444" stroke-width="1.2" stroke-linecap="round" style="display:block;margin:0 auto"><polyline points="2,10 7.5,4.5 13,10"/><line x1="7.5" y1="4.5" x2="7.5" y2="14"/><line x1="3.5" y1="14" x2="11.5" y2="14"/></svg><div class="az-lbl">recording.${ext}</div><div class="az-hint">recorded · ${fmt(recSeconds)} · ${sizeMB}MB</div>`;
+        buildMiniWave('wmwv'); ckWhisper();
+        stream.getTracks().forEach(t=>t.stop());
+      };
+      mediaRecorder.start(100);
+      isRecording=true; recSeconds=0;
+      rb.classList.add('rr'); rd.classList.add('p');
+      rl.textContent='recording... 0:00';
+      recTimer=setInterval(()=>{ recSeconds++; rl.textContent='recording... '+fmt(recSeconds); if(recSeconds>=300)toggleRecord(); },1000);
+    } catch(e){ err.textContent='mic access blocked — check browser settings'; err.classList.add('show'); }
+  } else {
+    clearInterval(recTimer); isRecording=false;
+    rb.classList.remove('rr'); rd.classList.remove('p');
+    rl.textContent='record your voice';
+    if(mediaRecorder&&mediaRecorder.state!=='inactive')mediaRecorder.stop();
+  }
+}
+
+function buildMiniWave(id){
+  const w=document.getElementById(id); w.innerHTML='';
+  for(let i=0;i<28;i++){
+    const h=2+Math.floor(Math.random()*16);
+    const s=document.createElement('span'); s.style.height=h+'px'; w.appendChild(s);
+  }
+  w.classList.add('show');
+  w.querySelectorAll('span').forEach((s,i)=>setTimeout(()=>{ s.style.background='#111'; },i*16));
+}
+
+async function saveWhisper(){
+  const title=document.getElementById('wt').value.trim();
+  if(!title||!newAudioBlob||!currentUser) return;
+
+  const btn=document.getElementById('whisper-submit');
+  btn.classList.remove('go'); btn.textContent='uploading...';
+
+  // Upload audio to Supabase Storage
+  const ext = newAudioBlob.type.includes('mp4')||newAudioBlob.type.includes('m4a') ? 'm4a'
+            : newAudioBlob.type.includes('ogg') ? 'ogg'
+            : newAudioBlob.type.includes('wav') ? 'wav'
+            : newAudioBlob.type.includes('webm') ? 'webm' : 'mp3';
+  const audioPath = `${currentUser.id}/${uid()}.${ext}`;
+  const progressBar = document.getElementById('wfi-progress');
+  const progressFill = document.getElementById('wfi-fill');
+  progressBar.classList.add('show');
+
+  // Simulate upload progress (Supabase JS v2 doesn't expose progress natively)
+  let prog = 0;
+  const progTimer = setInterval(()=>{ prog=Math.min(prog+8,90); progressFill.style.width=prog+'%'; },200);
+
+  const { error: upErr } = await sb.storage.from(STORAGE_BUCKET).upload(audioPath, newAudioBlob, {
+    contentType: newAudioBlob.type, upsert: false
+  });
+  clearInterval(progTimer);
+  if(upErr){ progressBar.classList.remove('show'); btn.classList.add('go'); btn.textContent='Save whisper →'; showToast('Upload failed: ' + upErr.message); return; }
+  progressFill.style.width='100%';
+
+  // Get public URL
+  const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(audioPath);
+  const audioUrl = urlData.publicUrl;
+
+  // Generate share token
+  const shareToken = uid();
+
+  // Save whisper to DB
+  const { data: w, error: dbErr } = await sb.from('whispers').insert({
+    user_id: currentUser.id,
+    folder_id: activeFolderId,
+    title,
+    for_whom: document.getElementById('wfw').value.trim() || null,
+    message: document.getElementById('wmsg').value.trim() || null,
+    audio_url: audioUrl,
+    audio_path: audioPath,
+    duration: newAudioDuration,
+    share_token: shareToken,
+  }).select().single();
+
+  progressBar.classList.remove('show');
+  btn.textContent='Save whisper →';
+
+  if(dbErr){ showToast('Error: ' + dbErr.message); btn.classList.add('go'); return; }
+
+  const shareUrl = window.location.origin + window.location.pathname + '#/w/' + shareToken;
+  document.getElementById('sh-link-display').textContent = shareUrl;
+  showPg('pg-share');
+  newAudioBlob=null; newAudioDuration=0;
+}
+
+function backToFolderFromShare(){ if(activeFolderId) openFolder(activeFolderId); else showPg('pg-profile'); }
+
+function copyLink(){
+  const link=document.getElementById('sh-link-display').textContent;
+  if(navigator.clipboard) navigator.clipboard.writeText(link).then(()=>showToast('copied'));
+  else{ const ta=document.createElement('textarea'); ta.value=link; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('copied'); }
+}
+
+function shareNative(){
+  const link=document.getElementById('sh-link-display').textContent;
+  if(navigator.share) navigator.share({title:'a whisper for you',url:link});
+  else copyLink();
+}
+
+function previewWhisper(){
+  // Open the listen page for the just-saved whisper
+  const link = document.getElementById('sh-link-display').textContent;
+  const token = link.split('#/w/')[1];
+  if(token) openListenPage(token);
+}
+
+// ============================================================
+// WHISPER OPTIONS
+// ============================================================
+function openWhisperOptions(wid){ activeWhisperId=wid; document.getElementById('whisper-opts').classList.add('open'); }
+function closeWhisperOptions(){ document.getElementById('whisper-opts').classList.remove('open'); }
+
+function copyWhisperLink(){
+  closeWhisperOptions();
+  // Need to fetch share token first
+  sb.from('whispers').select('share_token').eq('id', activeWhisperId).single().then(({data})=>{
+    if(!data) return;
+    const link = window.location.origin + window.location.pathname + '#/w/' + data.share_token;
+    if(navigator.clipboard) navigator.clipboard.writeText(link).then(()=>showToast('copied'));
+    else showToast(link);
+  });
+}
+
+async function deleteWhisperConfirm(){
+  closeWhisperOptions();
+  if(!confirm('Delete this whisper?')) return;
+  const { data: w } = await sb.from('whispers').select('audio_path, folder_id').eq('id', activeWhisperId).single();
+  if(w?.audio_path) await sb.storage.from(STORAGE_BUCKET).remove([w.audio_path]);
+  await sb.from('whispers').delete().eq('id', activeWhisperId);
+  if(w?.folder_id) openFolder(w.folder_id);
+  showToast('deleted');
+}
+
+// ============================================================
+// LISTEN PAGE — public, no auth needed
+// ============================================================
+async function openListenPage(token){
+  showPg('pg-listen');
+  const content = document.getElementById('listen-content');
+  content.innerHTML = '<div class="empty"><span class="spinner"></span></div>';
+
+  const { data: w, error } = await sb.from('whispers').select('*, folders(name, visibility)').eq('share_token', token).single();
+
+  if(error || !w){
+    content.innerHTML='<div style="padding:52px 0;text-align:center;font-size:14px;color:#aaa;font-style:italic">this whisper does not exist or has been removed.</div>';
+    return;
+  }
+
+  content.innerHTML=`
+    <span class="back-row" onclick="goHome()">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,1.5 2.5,5.5 7,9.5"/></svg>
+      home
+    </span>
+    <div style="font-style:italic;font-size:22px;line-height:1.4;margin-bottom:${w.for_whom?'4px':'20px'}">${esc(w.title)}</div>
+    ${w.for_whom?`<div style="font-size:13px;color:#aaa;margin-bottom:20px">for ${esc(w.for_whom)}</div>`:''}
+    <div id="l-wf" style="display:flex;align-items:flex-end;gap:2px;height:28px;margin-bottom:12px"></div>
+    <div id="l-time" style="font-size:12px;color:#bbb;margin-bottom:24px;font-style:italic">0:00 / ${fmt(w.duration)}</div>
+    <div style="display:flex;justify-content:center;margin-bottom:20px;overflow:visible">${musicBoxSVG('lp')}</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:14px;user-select:none">
+      <canvas id="l-handle" width="80" height="80" class="hcv-el"></canvas>
+      <div class="hhint" id="l-hint">turn clockwise to listen</div>
+    </div>
+    ${w.message?`<div style="border-top:1px solid #ebebeb;padding-top:16px;margin-top:4px"><p style="font-size:13px;font-style:italic;color:#999;line-height:1.85">${esc(w.message)}</p></div>`:''}
+    <div style="text-align:center;margin-top:32px;font-size:11px;color:#ccc;font-style:italic">whisper — by senaslowblog</div>
+  `;
+
+  buildWaveform('l-wf');
+  drawHandle(document.getElementById('l-handle'), 0);
+
+  const audioEl = new Audio(w.audio_url);
+  audioEl.preload = 'auto';
+  initListenHandle(w, audioEl);
+}
+
+function initListenHandle(w, audio){
+  const cv=document.getElementById('l-handle'); if(!cv)return;
+  let lHa=0,lDrag=false,lLa=null,lAp=0,lPt=null;
+  const dur = w.duration || 60;
+  function gaL(e){ const r=cv.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2; const p=e.touches?e.touches[0]:e; return Math.atan2(p.clientY-cy,p.clientX-cx)*180/Math.PI; }
+  function onL(e){
+    if(!lDrag)return; e.preventDefault();
+    const a=gaL(e); let d=a-lLa; if(d>180)d-=360; if(d<-180)d+=360;
+    lLa=a; lHa+=d; drawHandle(cv,lHa);
+    if(d>1){
+      lAp=Math.min(dur,lAp+d/DPS);
+      if(Math.abs(audio.currentTime-lAp)>0.5)audio.currentTime=lAp;
+      if(audio.paused)audio.play().catch(()=>{});
+      flashTines('lp'); updateWaveform('l-wf',lAp,dur);
+      document.getElementById('l-time').textContent=fmt(lAp)+' / '+fmt(dur);
+      const hh=document.getElementById('l-hint');
+      if(lAp>=dur){ hh.textContent='— finished —'; hh.className='hhint dn'; audio.pause(); }
+      else{ hh.textContent='keep turning...'; hh.className='hhint act'; clearTimeout(lPt); lPt=setTimeout(()=>{ audio.pause(); const h=document.getElementById('l-hint'); if(h&&lAp<dur){h.textContent='turn clockwise to listen';h.className='hhint';} },500); }
+    } else if(d<-2){ audio.pause(); const h=document.getElementById('l-hint'); if(h){h.textContent='turn clockwise';h.className='hhint';} }
+  }
+  cv.addEventListener('mousedown',e=>{e.preventDefault();lDrag=true;lLa=gaL(e);});
+  document.addEventListener('mousemove',onL);
+  document.addEventListener('mouseup',()=>{ lDrag=false; lLa=null; audio.pause(); });
+  cv.addEventListener('touchstart',e=>{e.preventDefault();lDrag=true;lLa=gaL(e);},{passive:false});
+  document.addEventListener('touchmove',onL,{passive:false});
+  document.addEventListener('touchend',()=>{ lDrag=false; lLa=null; audio.pause(); });
+  audio.addEventListener('timeupdate',()=>{ if(!lDrag){ lAp=audio.currentTime; updateWaveform('l-wf',lAp,dur); document.getElementById('l-time').textContent=fmt(lAp)+' / '+fmt(dur); } });
+}
+
+// ============================================================
+// MODAL PLAYER (from folder view)
+// ============================================================
+async function openModal(wid){
+  const { data: w } = await sb.from('whispers').select('*').eq('id', wid).single();
+  if(!w) return;
+  activeWhisperId = wid;
+  if(mAudioEl){ mAudioEl.pause(); mAudioEl=null; }
+  mHa=0; mAp=0;
+  document.getElementById('mp-title').textContent=w.title;
+  document.getElementById('mp-time').textContent='0:00 / '+fmt(w.duration);
+  document.getElementById('mp-hint').textContent='turn clockwise to listen';
+  document.getElementById('mp-hint').className='hhint';
+  const note=document.getElementById('mp-note');
+  document.getElementById('mp-note-text').textContent=w.message||'';
+  note.style.display=w.message?'block':'none';
+  document.getElementById('mp-box').innerHTML=musicBoxSVG('mp');
+  buildWaveform('mp-wf');
+  drawHandle(document.getElementById('mp-handle'),0);
+  mAudioEl=new Audio(w.audio_url);
+  mAudioEl.preload='auto';
+  mAudioEl.addEventListener('timeupdate',()=>{ mAp=mAudioEl.currentTime; updateWaveform('mp-wf',mAp,w.duration||60); document.getElementById('mp-time').textContent=fmt(mAp)+' / '+fmt(w.duration); });
+  document.getElementById('modal-player').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal-player').classList.remove('open');
+  document.body.style.overflow='';
+  clearTimeout(mPt);
+  if(mAudioEl){ mAudioEl.pause(); mAudioEl=null; }
+}
+
+// Modal handle drag
+const mpHandle = document.getElementById('mp-handle');
+function gaM(e){ const r=mpHandle.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2; const p=e.touches?e.touches[0]:e; return Math.atan2(p.clientY-cy,p.clientX-cx)*180/Math.PI; }
+function onMMove(e){
+  if(!mDrag)return; e.preventDefault();
+  const a=gaM(e); let d=a-mLa; if(d>180)d-=360; if(d<-180)d+=360;
+  mLa=a; mHa+=d; drawHandle(mpHandle,mHa);
+  if(!mAudioEl)return;
+  const dur=mAudioEl.duration||60;
+  if(d>1){
+    mAp=Math.min(dur,mAp+d/DPS);
+    if(Math.abs(mAudioEl.currentTime-mAp)>0.5)mAudioEl.currentTime=mAp;
+    if(mAudioEl.paused)mAudioEl.play().catch(()=>{});
+    flashTines('mp'); updateWaveform('mp-wf',mAp,dur);
+    const hh=document.getElementById('mp-hint');
+    if(mAp>=dur){ hh.textContent='— finished —'; hh.className='hhint dn'; mAudioEl.pause(); }
+    else{ hh.textContent='keep turning...'; hh.className='hhint act'; clearTimeout(mPt); mPt=setTimeout(()=>{ if(mAudioEl)mAudioEl.pause(); const h=document.getElementById('mp-hint'); if(h&&mAp<dur){h.textContent='turn clockwise to listen';h.className='hhint';} },500); }
+  } else if(d<-2){ mAudioEl.pause(); const h=document.getElementById('mp-hint'); if(h){h.textContent='turn clockwise';h.className='hhint';} }
+}
+mpHandle.addEventListener('mousedown',e=>{e.preventDefault();mDrag=true;mLa=gaM(e);});
+document.addEventListener('mousemove',onMMove);
+document.addEventListener('mouseup',()=>{ mDrag=false; mLa=null; if(mAudioEl)mAudioEl.pause(); });
+mpHandle.addEventListener('touchstart',e=>{e.preventDefault();mDrag=true;mLa=gaM(e);},{passive:false});
+document.addEventListener('touchmove',onMMove,{passive:false});
+document.addEventListener('touchend',()=>{ mDrag=false; mLa=null; if(mAudioEl)mAudioEl.pause(); });
+
+// ============================================================
+// DRAWING HELPERS
+// ============================================================
+function drawHandle(cv,angle){
+  if(!cv)return;
+  const ctx=cv.getContext('2d'),cx=40,cy=40,r=30;
+  ctx.clearRect(0,0,80,80);
+  ctx.strokeStyle='#ebebeb'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+  const rad=(angle-90)*Math.PI/180, ax=cx+21*Math.cos(rad), ay=cy+21*Math.sin(rad);
+  ctx.strokeStyle='#111'; ctx.lineWidth=1.6; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ax,ay); ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.strokeStyle='#111'; ctx.lineWidth=1.1;
+  ctx.beginPath(); ctx.arc(ax,ay,3.2,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(cx,cy,2,0,Math.PI*2); ctx.fill();
+}
+
+function buildWaveform(id){
+  const w=document.getElementById(id); if(!w)return; w.innerHTML='';
+  for(let i=0;i<36;i++){ const h=4+Math.floor(Math.random()*20); const s=document.createElement('span'); s.style.height=h+'px'; s.className='bu'; w.appendChild(s); }
+}
+
+function updateWaveform(id,pos,dur){
+  const bars=document.querySelectorAll('#'+id+' span'); if(!bars.length)return;
+  const pi=Math.floor(pos/dur*bars.length);
+  bars.forEach((b,i)=>{ b.className=i<pi?'bp':i===pi?'bc':'bu'; });
+}
+
+function musicBoxSVG(prefix){
+  let tines='';
+  for(let i=0;i<21;i++){ const x=14+i*6,y2=i%2===0?62:65; tines+=`<line x1="${x}" y1="52" x2="${x}" y2="${y2}" stroke="#c8c8c8" stroke-width="1.1" stroke-linecap="round" id="${prefix}-t${i}"/>`; }
+  const hp=[[48,10],[70,10],[102,10],[56,18],[86,18],[110,26],[64,26],[48,34],[94,34],[78,42],[56,50],[102,50]];
+  let holes=hp.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="2.5" fill="#111" id="${prefix}-h${i}"/>`).join('');
+  return `<svg width="100%" viewBox="0 0 230 122" fill="none" style="max-width:230px;display:block;margin:0 auto;overflow:visible">
+    <rect x="8" y="54" width="178" height="60" rx="3" fill="#f9f9f9" stroke="#111" stroke-width="1.2"/>
+    <rect x="8" y="54" width="178" height="8" fill="#f3f3f3"/>
+    <line x1="8" y1="62" x2="186" y2="62" stroke="#e0e0e0" stroke-width=".7"/>
+    <path d="M16 76 Q52 74 96 76.5 Q132 75 176 77" stroke="#e8e8e8" stroke-width=".8" fill="none" stroke-linecap="round"/>
+    <path d="M14 88 Q55 86 100 88.5 Q134 87 176 89" stroke="#e8e8e8" stroke-width=".8" fill="none" stroke-linecap="round"/>
+    <path d="M14 100 Q56 98 102 100.5 Q136 99 176 101" stroke="#e8e8e8" stroke-width=".8" fill="none" stroke-linecap="round"/>
+    <path d="M14 112 Q58 110 104 112.5 Q138 111 176 113" stroke="#e8e8e8" stroke-width=".8" fill="none" stroke-linecap="round"/>
+    <rect x="8" y="44" width="128" height="14" rx="1" fill="#fff" stroke="#111" stroke-width="1.1"/>
+    <rect x="8" y="44" width="128" height="3.5" fill="#f0f0f0"/>
+    ${tines}
+    <rect x="38" y="6" width="72" height="42" rx="1" fill="#fff" stroke="#111" stroke-width="1.1"/>
+    <rect x="38" y="6" width="72" height="3" fill="#f5f5f5"/>
+    <line x1="46" y1="6" x2="46" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="54" y1="6" x2="54" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="62" y1="6" x2="62" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="70" y1="6" x2="70" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="78" y1="6" x2="78" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="86" y1="6" x2="86" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="94" y1="6" x2="94" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="102" y1="6" x2="102" y2="48" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="14" x2="110" y2="14" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="22" x2="110" y2="22" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="30" x2="110" y2="30" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="38" x2="110" y2="38" stroke="#e8e8e8" stroke-width=".7"/>
+    <line x1="38" y1="46" x2="110" y2="46" stroke="#e8e8e8" stroke-width=".7"/>
+    ${holes}
+    <line x1="186" y1="82" x2="200" y2="82" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="210" cy="82" r="9" fill="#f5f5f5" stroke="#111" stroke-width="1.2"/>
+    <circle cx="210" cy="82" r="4" fill="#fff" stroke="#111" stroke-width=".9"/>
+    <circle cx="210" cy="82" r="1.8" fill="#111"/>
+  </svg>`;
+}
+
+function flashTines(prefix){
+  const n=Math.floor(Math.random()*21);
+  const t=document.getElementById(prefix+'-t'+n);
+  if(t){ t.setAttribute('stroke','#DD4444'); setTimeout(()=>t.setAttribute('stroke','#c8c8c8'),120); }
+}
+
+// ============================================================
+// ROUTING — hash-based
+// ============================================================
+function checkRoute(){
+  const hash = window.location.hash;
+  if(hash.startsWith('#/w/')){ openListenPage(hash.slice(4)); }
+}
+window.addEventListener('hashchange', checkRoute);
+
+// ============================================================
+// INIT — check session
+// ============================================================
+async function init(){
+  const { data: { session } } = await sb.auth.getSession();
+  if(session){
+    currentUser = session.user;
+    await loadProfile();
+    updateNav();
+    if(window.location.hash.startsWith('#/w/')){
+      checkRoute();
+    } else {
+      showPg('pg-landing');
+    }
+  } else {
+    updateNav();
+    if(window.location.hash.startsWith('#/w/')){
+      checkRoute(); // public listen page — no auth needed
+    } else {
+      showPg('pg-login');
+    }
+  }
+  // Draw the modal handle
+  buildWaveform('mp-wf');
+  drawHandle(mpHandle, 0);
+}
+
+init();
+</script>
+</body>
+</html>
